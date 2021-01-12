@@ -1,0 +1,1 @@
+export const TW_CENTER = 'flex justify-center items-center h-full';
