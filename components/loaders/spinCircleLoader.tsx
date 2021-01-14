@@ -3,19 +3,17 @@ import { CommonProps } from '../common';
 
 interface Props extends CommonProps {
   fillColor?: string;
-  strokeColor?: string;
   width?: number;
   height?: number;
 }
 
 export const SpinningCircles: FunctionComponent<Props> = (props) => {
-  const { fillColor, strokeColor, width, height, ...other } = props;
+  const { fillColor, width, height, ...other } = props;
 
   return <svg width={width || 48} height={height || 48} viewBox="0 0 58 58"  {...other}>
     <g
       transform="translate(2 1)"
-      stroke={strokeColor || '#3498db'}
-      strokeWidth={0.1}
+      strokeWidth={0}
       fill={fillColor || '#3498db'}
       fillRule="evenodd"
     >

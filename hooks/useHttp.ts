@@ -1,50 +1,69 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppProvider } from '../contexts/appContext';
 
-const baseReq: Partial<RequestInit> = {
-  credentials: 'include',
-};
-
 const jsonReq: Partial<RequestInit> = {
-  ...baseReq,
-  ...{
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  headers: {
+    'Content-Type': 'application/json'
   }
 };
 
-export type GetState = {
+export type FetchState = {
   loading: boolean;
   result: any;
 };
 
-export const useGet = (endpoint: string): GetState => {
+export type FetchActionState = FetchState & {
+  submit: (body?: any | null) => void;
+};
+
+export type GetState = FetchState & {
+  get: () => void;
+};
+
+export type PostState = FetchState & {
+  post: (payload: any) => void;
+};
+
+export const useFetch = (endpoint: string, req: RequestInit): FetchActionState => {
   const { apiUrl } = useAppProvider();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(undefined);
 
-  const req: RequestInit = {
-    ...jsonReq,
-    ...{
-      method: 'GET',
+  const submit = async (body?: any) => {
+    setLoading(true);
+
+    const response: Response = await fetch(
+      apiUrl(endpoint),
+      { ...jsonReq, ...req, ...{ body: JSON.stringify(body) } }
+    );
+
+    // TODO: partially done, e.g. need to handle different http status code from the backend...
+    // e.g. callbacks for unauthorized, etc...
+
+    const json = await response.json();
+
+    if (!response.ok) {
+      alert(json.error);
     }
+
+    setLoading(false);
+    setResult(json);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  return { loading, result, submit };
+};
 
-      const response: Response = await fetch(apiUrl(endpoint), req);
-      // TODO: do something here according to the http status code later...
+export const useGet = (endpoint: string): GetState => {
+  const { loading, result, submit } = useFetch(endpoint, { method: 'GET' });
+  const get = async () => submit();
 
-      setLoading(false);
-      setResult(await response.json());
-    };
+  return { loading, result, get };
+};
 
-    fetchData();
-  }, [endpoint]);
+export const usePost = (endpoint: string): PostState => {
+  const { loading, result, submit } = useFetch(endpoint, { method: 'POST' });
+  const post = async (payload: any) => submit(payload);
 
-  return { loading, result };
+  return { loading, result, post };
 };
