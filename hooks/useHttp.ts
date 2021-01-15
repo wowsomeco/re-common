@@ -51,7 +51,7 @@ export const useFetch = (method: Method, endpoint: string): FetchState => {
     const status = response.status;
     const ok = response.ok;
     const data = await response.json();
-
+    // TODO: cancel prop so that this wont get triggered when unmounted
     setLoading(false);
     setResult(data);
 

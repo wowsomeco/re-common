@@ -10,7 +10,7 @@ export interface ModalProps extends CommonProps {
 }
 
 export const Modal: FunctionComponent<ModalProps> = ({ color, opacity, children }) => {
-  const rgba = toRgba(color || '#000000', opacity || 0.5);
+  const rgba = toRgba(color || '#000000', opacity || 0.3);
 
   return (
     <div style={{ zIndex: 9999, backgroundColor: rgba }} className="absolute w-full h-full top-0 left-0">
