@@ -38,5 +38,9 @@ export function toRgba(color: string, opacity: number): string {
 }
 
 export function subDomain(): string {
-  return window.location.host.split('.')[0];
+  const firstDomain = window.location.host.split('.')[0];
+  // removes the port along with its semicolon
+  const withNoDigits = firstDomain.replace(/[0-9]/g, '');
+  const outputString = withNoDigits.replace(/:([^:]*)$/, '$1');
+  return outputString;
 }

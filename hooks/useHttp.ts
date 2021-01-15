@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { useAppProvider } from '../contexts/appContext';
-
-const jsonReq: Partial<RequestInit> = {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-};
+import { subDomain } from '../scripts';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -21,8 +16,15 @@ export type FetchState = {
   submit: (body?: any | null) => Promise<Resp>;
 };
 
+/**
+ * The fetch api hook, utilizing fetch under the hood.
+ * TODO: more docs coming soon
+ * 
+ * @param method the Http Method (GET,POST,PUT,DELETE)
+ * @param endpoint the rest api endpoint without the prefix forward slash
+ */
 export const useFetch = (method: Method, endpoint: string): FetchState => {
-  const { apiUrl } = useAppProvider();
+  const { apiUrl, checkToken, tenantKey } = useAppProvider();
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(undefined);
@@ -30,16 +32,25 @@ export const useFetch = (method: Method, endpoint: string): FetchState => {
   const submit = async (body?: any | null): Promise<Resp> => {
     setLoading(true);
 
-    const response: Response = await fetch(
-      apiUrl(endpoint),
-      { ...jsonReq, ...{ method, body: JSON.stringify(body) } }
-    );
+    // if tenantKey is defined, then set it with the cur window subdomain as the value.
+    const req: RequestInit = {
+      method,
+      body: JSON.stringify(body),
+      headers: {
+        ...{
+          'Authorization': checkToken(),
+          'Content-Type': 'application/json',
+        },
+        ...(tenantKey && { [tenantKey]: subDomain() })
+      }
+    };
 
+    const response: Response = await fetch(apiUrl(endpoint), req);
     // TODO: partially done, e.g. need to handle different http status code from the backend...
-    // e.g. callbacks for unauthorized, etc...
+    // e.g. callbacks when unauthorized, etc...
     const status = response.status;
-    const data = await response.json();
     const ok = response.ok;
+    const data = await response.json();
 
     setLoading(false);
     setResult(data);
