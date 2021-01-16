@@ -44,3 +44,11 @@ export function subDomain(): string {
   const outputString = withNoDigits.replace(/:([^:]*)$/, '$1');
   return outputString;
 }
+
+export function mapRecord<T>(record: Record<any, any>, callback: (k: any, v: any) => T): T[] {
+  const t: T[] = [];
+  for (const k in record) {
+    t.push(callback(k, record[k]));
+  }
+  return t;
+}

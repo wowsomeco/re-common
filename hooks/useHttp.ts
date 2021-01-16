@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
+import { useIsMounted } from './utils';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -28,6 +29,7 @@ export const useFetch = (method: Method, endpoint: string): FetchState => {
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(undefined);
+  const mounted = useIsMounted();
 
   const submit = async (body?: any | null): Promise<Resp> => {
     setLoading(true);
@@ -51,9 +53,11 @@ export const useFetch = (method: Method, endpoint: string): FetchState => {
     const status = response.status;
     const ok = response.ok;
     const data = await response.json();
-    // TODO: cancel prop so that this wont get triggered when unmounted
-    setLoading(false);
-    setResult(data);
+    // dont change state when no longer mounted
+    if (mounted()) {
+      setLoading(false);
+      setResult(data);
+    }
 
     return { status, ok, data };
   };

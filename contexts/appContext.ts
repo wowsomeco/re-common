@@ -5,6 +5,8 @@ export type AppTheme = {
   inputClass: string;
   /** css classes applied to label input field */
   labelClass: string;
+  /** css classes applied to buttons */
+  buttonClass?: string;
 };
 
 /**
