@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { FiChevronsLeft, FiChevronRight, FiHome, FiSearch } from 'react-icons/fi';
+import { FiChevronRight, FiChevronsLeft, FiHome, FiSearch } from 'react-icons/fi';
 import { IconBaseProps } from 'react-icons/lib';
 
 type IconName =

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { CommonProps } from './common';
+
 import { toRgba } from '../scripts';
+import { CommonProps } from './common';
 
 export interface ModalProps extends CommonProps {
   /** the BG color in hex e.g. #ecf0f1 */
