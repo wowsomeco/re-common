@@ -1,4 +1,4 @@
-import { createContext,useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 export type AppTheme = {
   /** css classes applied to input field */
@@ -29,6 +29,7 @@ export type AppProvider = {
   apiUrl: (params: string) => string;
   onAuthenticated: (model: any, token: string) => void;
   checkToken: () => string | null;
+  logout: () => void;
 };
 
 export const AppContext = createContext<AppProvider>(undefined);
