@@ -4,14 +4,14 @@ import { CommonProps } from '../common';
 
 interface Props extends CommonProps {
   fillColor?: string;
-  width?: number;
+  size?: number;
   height?: number;
 }
 
 export const SpinningCircles: FunctionComponent<Props> = (props) => {
-  const { fillColor, width, height, ...other } = props;
+  const { fillColor, size, ...other } = props;
 
-  return <svg width={width || 48} height={height || 48} viewBox="0 0 58 58"  {...other}>
+  return <svg width={size || 48} height={size || 48} viewBox="0 0 58 58"  {...other}>
     <g
       transform="translate(2 1)"
       strokeWidth={0}
