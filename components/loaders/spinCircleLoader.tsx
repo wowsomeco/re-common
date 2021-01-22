@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 
 import { CommonProps } from '../common';
 
@@ -8,14 +8,16 @@ interface Props extends CommonProps {
   height?: number;
 }
 
-export const SpinningCircles: FunctionComponent<Props> = (props) => {
-  const { fillColor, size, ...other } = props;
-
-  return <svg width={size || 48} height={size || 48} viewBox="0 0 58 58"  {...other}>
+export const SpinningCircles: React.FC<Props> = ({
+  fillColor = '#9AECDB',
+  size = 48,
+  ...other
+}) => {
+  return <svg width={size} height={size} viewBox="0 0 58 58"  {...other}>
     <g
       transform="translate(2 1)"
       strokeWidth={0}
-      fill={fillColor || '#3498db'}
+      fill={fillColor}
       fillRule="evenodd"
     >
       <circle cx={42.601} cy={11.462} r={5}>

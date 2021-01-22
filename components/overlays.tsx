@@ -1,23 +1,17 @@
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 
-import { TW_CENTER } from '../scripts';
 import { SpinningCircles } from './loaders';
 import { Modal, ModalProps } from './modal';
 
-interface OverlayLoadingProps extends ModalProps {
-  open: boolean;
-}
-
-export const OverlayLoading: FunctionComponent<OverlayLoadingProps> = (props) => {
-  const { open, ...modalProps } = props;
-
+export const OverlayLoading: React.FC<ModalProps> = (props) => {
   return (
-    open ?
-      <Modal {...modalProps}>
-        <div className={TW_CENTER}>
-          <SpinningCircles />
-        </div>
-      </Modal>
-      : <></>
+    <Modal {...props}>
+      <div className="relative w-full h-full">
+        <SpinningCircles
+          style={{ transform: 'translate(-50%,-50%)' }}
+          className="absolute top-1/2 left-1/2 text-center"
+        />
+      </div>
+    </Modal>
   );
 };

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 import { FiChevronRight, FiChevronsLeft, FiHome, FiSearch } from 'react-icons/fi';
 import { IconBaseProps } from 'react-icons/lib';
 
@@ -20,7 +20,7 @@ interface CommonIconProps extends IconBaseProps {
   name: IconName;
 }
 
-export const CommonIcon: FunctionComponent<CommonIconProps> = (props) => {
+export const CommonIcon: React.FC<CommonIconProps> = (props) => {
   const { name, ...iconProps } = props;
   return (
     icons[name](iconProps)

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import * as React from 'react';
 
 export type AppTheme = {
   /** css classes applied to input field */
@@ -32,6 +32,6 @@ export type AppProvider = {
   logout: () => void;
 };
 
-export const AppContext = createContext<AppProvider>(undefined);
+export const AppContext = React.createContext<AppProvider>(undefined);
 
-export const useAppProvider = (): AppProvider => useContext(AppContext);
+export const useAppProvider = (): AppProvider => React.useContext(AppContext);

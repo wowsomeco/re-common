@@ -1,4 +1,4 @@
-import { createContext,useContext } from 'react';
+import * as React from 'react';
 
 export type LayoutProvider = {
   sideCollapsed: boolean;
@@ -6,6 +6,6 @@ export type LayoutProvider = {
   toggleCollapse: () => void;
 };
 
-export const LayoutContext = createContext<LayoutProvider>(undefined);
+export const LayoutContext = React.createContext<LayoutProvider>(undefined);
 
-export const useLayoutProvider = (): LayoutProvider => useContext(LayoutContext);
+export const useLayoutProvider = (): LayoutProvider => React.useContext(LayoutContext);

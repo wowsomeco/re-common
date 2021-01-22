@@ -1,21 +1,40 @@
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+import useKey, { KeyFilter } from 'react-use/lib/useKey';
 
 import { toRgba } from '../scripts';
 import { CommonProps } from './common';
 
+type KeyTrigger = [KeyFilter, () => void];
+
 export interface ModalProps extends CommonProps {
+  open: boolean;
   /** the BG color in hex e.g. #ecf0f1 */
   color?: string;
   /** The opacity of the BG */
   opacity?: number;
+  keyTriggers?: KeyTrigger[];
+  appendOnBody?: boolean;
 }
 
-export const Modal: FunctionComponent<ModalProps> = ({ color, opacity, children }) => {
-  const rgba = toRgba(color || '#000000', opacity || 0.3);
+export const Modal: React.FC<ModalProps> = ({
+  open,
+  color = '#000000',
+  opacity = 0.3,
+  keyTriggers = [],
+  appendOnBody = false,
+  children
+}) => {
+  keyTriggers.forEach(k => useKey(k[0], k[1]));
+  const rgba = toRgba(color, opacity);
 
-  return (
+  const component: React.ReactElement =
     <div style={{ zIndex: 9999, backgroundColor: rgba }} className="absolute w-full h-full top-0 left-0">
       {children}
-    </div>
+    </div>;
+
+  return (
+    open &&
+      appendOnBody ? ReactDOM.createPortal(component, document.body) : component
   );
 };

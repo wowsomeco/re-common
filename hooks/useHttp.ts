@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import * as React from 'react';
 
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
@@ -13,7 +13,7 @@ type Resp<T> = {
   error?: string;
 };
 
-export type FetchState<T> = {
+export type FetchProps<T> = {
   loading: boolean;
   result: T;
   submit: (body?: any | null) => Promise<Resp<T>>;
@@ -26,15 +26,16 @@ export type FetchState<T> = {
  * @param method the Http Method (GET,POST,PUT,DELETE)
  * @param endpoint the rest api endpoint without the prefix forward slash (/)
  */
-export const useFetch = <T>(method: Method, endpoint: string): FetchState<T> => {
+export const useFetch = <T>(method: Method, endpoint: string, defaultLoading = false): FetchProps<T> => {
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
 
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(undefined);
+  const [result, setResult] = React.useState<T>(undefined);
+  const [loading, setLoading] = React.useState(defaultLoading);
+
   const mounted = useIsMounted();
 
   const submit = async (body?: any | null): Promise<Resp<T>> => {
-    setLoading(true);
+    if (!loading) setLoading(true);
 
     // if tenantKey is defined, then set it with the cur window subdomain as the value.
     const req: RequestInit = {
@@ -58,8 +59,8 @@ export const useFetch = <T>(method: Method, endpoint: string): FetchState<T> => 
     const error = data?.error;
     // dont change state when no longer mounted
     if (mounted()) {
-      setLoading(false);
       setResult(data);
+      setLoading(false);
     }
 
     return { status, ok, data, error };
