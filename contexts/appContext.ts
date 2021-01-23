@@ -30,6 +30,8 @@ export type AppProvider = {
   onAuthenticated: (model: any, token: string) => void;
   checkToken: () => string | null;
   logout: () => void;
+  /** Global notification */
+  notif: (msg: string) => void;
 };
 
 export const AppContext = React.createContext<AppProvider>(undefined);
