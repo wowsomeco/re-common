@@ -6,7 +6,7 @@ import { useIsMounted } from './utils';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-type Resp<T> = {
+export type Resp<T> = {
   status: number;
   ok: boolean;
   data?: T;
