@@ -1,4 +1,4 @@
-import { loop, mapRecord, subDomain, tap } from '../functions';
+import { loop, mapRecord, subDomain, tap } from '../extensions';
 
 interface TapModel {
   username: string;

@@ -1,2 +1,2 @@
-export * from './functions';
+export * from './extensions';
 export * from './tailwindUtils';
