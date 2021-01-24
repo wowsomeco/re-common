@@ -17,6 +17,7 @@ type LoopCallback<T> = {
   prev: T | undefined;
 };
 
+/** iterates over the array with a custom callback [[LoopCalback]] for each of them  */
 export function loop<T>(arr: T[], callback: (d: LoopCallback<T>) => void) {
   if (!arr) return;
 

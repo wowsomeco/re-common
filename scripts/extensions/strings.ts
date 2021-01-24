@@ -24,3 +24,39 @@ export function subDomain(): string {
   const outputString = withNoDigits.replace(/:([^:]*)$/, '$1');
   return outputString;
 }
+
+/**
+ * Capitalizes a string
+ *
+ * @param str the string to capitalize
+ * @param separator the separator between the word
+ * @param replaceWith if defined, will replace the separator with this
+ *
+ * e.g
+ * ```typescript
+ * const str = 'i,dont,know';
+ * const cap = capitalize(str, ',', ':'); // i.e. I:Dont:Know
+ * ```
+ */
+export function capitalize(
+  str: string,
+  separator: string = ' ',
+  replaceWith: string = ' '
+) {
+  let capitalized: string = '';
+
+  const splits: string[] = str.split(separator);
+
+  for (let i = 0; i < splits.length; i++) {
+    const s = splits[i];
+    capitalized += `${s[0].toUpperCase()}${s.substring(1)}`;
+    // if last, replace separator with the provided replaceWith str
+    if (i < splits.length - 1) capitalized += replaceWith;
+  }
+
+  return capitalized;
+}
+
+export function hasNumbers(str: string) {
+  return /\d/.test(str);
+}

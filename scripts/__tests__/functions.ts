@@ -1,4 +1,11 @@
-import { loop, mapRecord, subDomain, tap } from '../extensions';
+import {
+  capitalize,
+  hasNumbers,
+  loop,
+  mapRecord,
+  subDomain,
+  tap
+} from '../extensions';
 
 interface TapModel {
   username: string;
@@ -80,23 +87,46 @@ describe('functions tests', () => {
   });
 
   test('loop tests', () => {
-    const arr1 = [1, 4, 7, 10];
+    const arr1 = [1, 4, 7, 10, 15, 3];
     const arr2 = [];
-    let firstCount = 0;
-    let lastCount = 0;
+    let firstItem = -1;
+    let lastItem = -1;
 
     loop(arr1, ({ item, first, last }) => {
-      firstCount += first ? 1 : 0;
-      lastCount += last ? 1 : 0;
+      if (first) firstItem = item;
+      if (last) lastItem = item;
 
       arr2.push(item);
     });
 
-    // make sure first will be called once only
-    expect(firstCount).toBe(1);
-    // make sure last will be called once only
-    expect(lastCount).toBe(1);
+    // make sure the first item is 1
+    expect(firstItem).toBe(1);
+    // make sure the last item is 3
+    expect(lastItem).toBe(3);
     // make sure the items in both array are the same
     expect(arr1).toEqual(arr2);
+  });
+
+  test('capitalize tests', () => {
+    const str1 = 'hi man how are you today?';
+    const capStr1 = capitalize(str1);
+    // ensure original remains
+    expect(str1).toBe('hi man how are you today?');
+    expect(capStr1).toBe('Hi Man How Are You Today?');
+
+    const str2 = 'i,dont,know';
+    const capStr2 = capitalize(str2, ',');
+    expect(capStr2).toBe('I Dont Know');
+
+    const capStr3 = capitalize(str2, ',', ':');
+    expect(capStr3).toBe('I:Dont:Know');
+  });
+
+  test('hasNumber tests', () => {
+    const str1 = '1hi man how?';
+    expect(hasNumbers(str1)).toBe(true);
+
+    const str2 = 'mann';
+    expect(hasNumbers(str2)).toBe(false);
   });
 });
