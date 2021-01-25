@@ -17,8 +17,8 @@ export type AppTheme = {
  */
 export type AppProvider = {
   appName: string;
-  /** 
-   * This is the key that differentiates each tenant sent in the http header based on the current subdomain. 
+  /**
+   * This is the key that differentiates each tenant sent in the http header based on the current subdomain.
    * a bit opinionated here, hence nullable, but let's see
    */
   tenantKey?: string;
@@ -31,7 +31,7 @@ export type AppProvider = {
   checkToken: () => string | null;
   logout: () => void;
   /** Global notification */
-  notif: (msg: string) => void;
+  notif: (msg: string, status: 'info' | 'error') => void;
 };
 
 export const AppContext = React.createContext<AppProvider>(undefined);

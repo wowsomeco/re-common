@@ -22,3 +22,10 @@ export function tap<T>(t: T, action: (T) => void): T {
   action(t);
   return t;
 }
+
+/**
+ * Clones a new copy of the given t
+ */
+export function clone<T>(t: T): T {
+  return JSON.parse(JSON.stringify(t));
+}

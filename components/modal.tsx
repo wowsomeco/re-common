@@ -39,7 +39,13 @@ export const Modal: React.FC<ModalProps> = ({
     </div>
   );
 
-  return open && appendOnBody
-    ? ReactDOM.createPortal(component, document.body)
-    : component;
+  return open ? (
+    appendOnBody ? (
+      ReactDOM.createPortal(component, document.body)
+    ) : (
+      component
+    )
+  ) : (
+    <></>
+  );
 };

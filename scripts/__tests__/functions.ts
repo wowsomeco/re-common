@@ -1,5 +1,6 @@
 import {
   capitalize,
+  clone,
   hasNumbers,
   loop,
   mapRecord,
@@ -128,5 +129,20 @@ describe('functions tests', () => {
 
     const str2 = 'mann';
     expect(hasNumbers(str2)).toBe(false);
+  });
+
+  test('clone tests', () => {
+    const obj1: number[] = [1, 2, 3];
+    const cloneObj1 = clone(obj1);
+    cloneObj1[0] = 5;
+    cloneObj1[1] = 4;
+
+    expect(obj1[0]).toBe(1);
+    expect(obj1[1]).toBe(2);
+    expect(obj1[2]).toBe(3);
+
+    expect(cloneObj1[0]).toBe(5);
+    expect(cloneObj1[1]).toBe(4);
+    expect(cloneObj1[2]).toBe(3);
   });
 });
