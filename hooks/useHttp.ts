@@ -22,11 +22,15 @@ export type FetchProps<T> = {
 /**
  * The fetch api hook, utilizing fetch under the hood.
  * TODO: more docs coming soon
- * 
+ *
  * @param method the Http Method (GET,POST,PUT,DELETE)
  * @param endpoint the rest api endpoint without the prefix forward slash (/)
  */
-export const useFetch = <T>(method: Method, endpoint: string, defaultLoading = false): FetchProps<T> => {
+export const useFetch = <T>(
+  method: Method,
+  endpoint: string,
+  defaultLoading = false
+): FetchProps<T> => {
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
 
   const [result, setResult] = React.useState<T>(undefined);
@@ -43,8 +47,8 @@ export const useFetch = <T>(method: Method, endpoint: string, defaultLoading = f
       body: JSON.stringify(body),
       headers: {
         ...{
-          'Authorization': checkToken(),
-          'Content-Type': 'application/json',
+          Authorization: checkToken(),
+          'Content-Type': 'application/json'
         },
         ...(tenantKey && { [tenantKey]: subDomain() })
       }

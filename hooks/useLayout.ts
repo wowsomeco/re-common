@@ -8,4 +8,5 @@ export type LayoutProvider = {
 
 export const LayoutContext = React.createContext<LayoutProvider>(undefined);
 
-export const useLayoutProvider = (): LayoutProvider => React.useContext(LayoutContext);
+export const useLayoutProvider = (): LayoutProvider =>
+  React.useContext(LayoutContext);
