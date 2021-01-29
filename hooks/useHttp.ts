@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { useMountedState } from 'react-use';
 
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
-import { useIsMounted } from './utils';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -36,7 +36,7 @@ export const useFetch = <T>(
   const [result, setResult] = React.useState<T>(undefined);
   const [loading, setLoading] = React.useState(defaultLoading);
 
-  const mounted = useIsMounted();
+  const isMounted = useMountedState();
 
   const submit = async (body?: any | null): Promise<Resp<T>> => {
     if (!loading) setLoading(true);
@@ -62,7 +62,7 @@ export const useFetch = <T>(
     const data = await response.json();
     const error = data?.error;
     // dont change state when no longer mounted
-    if (mounted()) {
+    if (isMounted()) {
       setResult(data);
       setLoading(false);
     }
