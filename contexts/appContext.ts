@@ -22,7 +22,7 @@ export type AppProvider = {
    * a bit opinionated here, hence nullable, but let's see
    */
   tenantKey?: string;
-  theme: AppTheme;
+  theme?: AppTheme;
   /** The current logged in user */
   profile: any;
   /** The base url of the rest api, acts like a callback that concats the base url with the given param for simplicity for now */
