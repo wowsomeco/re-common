@@ -42,7 +42,7 @@ export function capitalize(
   str: string,
   separator: string = ' ',
   replaceWith: string = ' '
-) {
+): string {
   let capitalized: string = '';
 
   const splits: string[] = str.split(separator);
@@ -57,6 +57,10 @@ export function capitalize(
   return capitalized;
 }
 
-export function hasNumbers(str: string) {
+export function hasNumbers(str: string): boolean {
   return /\d/.test(str);
+}
+
+export function hasWhiteSpace(s: string): boolean {
+  return s.includes(' ');
 }

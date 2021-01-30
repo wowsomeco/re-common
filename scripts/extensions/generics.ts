@@ -29,3 +29,17 @@ export function tap<T>(t: T, action: (T) => void): T {
 export function clone<T>(t: T): T {
   return JSON.parse(JSON.stringify(t));
 }
+
+/**
+ * Removes all empty properties from an object
+ * including the default values for each type
+ * e.g. number with value 0 will be removed
+ * string with value '' will get removed too
+ */
+export function removeEmpty(obj: Record<string, any>) {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([, v]) => v)
+      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
+  );
+}
