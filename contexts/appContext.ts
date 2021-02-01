@@ -27,7 +27,7 @@ export interface AppProvider {
   profile: any;
   /** The base url of the rest api, acts like a callback that concats the base url with the given param for simplicity for now */
   apiUrl: (params: string) => string;
-  onAuthenticated: (model: any, token: string) => void;
+  onAuthenticated: (model: any, token: string | undefined) => void;
   checkToken: () => string | null;
   logout: () => void;
   /** Global notification */
