@@ -15,7 +15,7 @@ export type AppTheme = {
  * once it's too overwhelming, we might split it into multiple contexts later on.
  * e.g. http stuff as one HttpContext, ThemeContext, etc
  */
-export type AppProvider = {
+export interface AppProvider {
   appName: string;
   /**
    * This is the key that differentiates each tenant sent in the http header based on the current subdomain.
@@ -32,8 +32,8 @@ export type AppProvider = {
   logout: () => void;
   /** Global notification */
   notif: (msg: string, status: 'info' | 'error') => void;
-};
+}
 
-export const AppContext = React.createContext<AppProvider>(undefined);
+export const AppContext = React.createContext<AppProvider>({} as AppProvider);
 
 export const useAppProvider = (): AppProvider => React.useContext(AppContext);

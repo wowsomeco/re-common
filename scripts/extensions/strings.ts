@@ -14,7 +14,7 @@ export function hexToRgb(hex: string): Record<string, number> | undefined {
 
 export function toRgba(color: string, opacity: number): string {
   const rgb = hexToRgb(color);
-  return `rgba(${[rgb.r, rgb.g, rgb.b].join(',')},${opacity})`;
+  return `rgba(${[rgb?.r, rgb?.g, rgb?.b].join(',')},${opacity})`;
 }
 
 export function subDomain(): string {

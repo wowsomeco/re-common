@@ -63,8 +63,8 @@ describe('generics tests', () => {
   });
 
   test('loop tests', () => {
-    const arr1 = [1, 4, 7, 10, 15, 3];
-    const arr2 = [];
+    const arr1: number[] = [1, 4, 7, 10, 15, 3];
+    const arr2: number[] = [];
     let firstItem = -1;
     let lastItem = -1;
 

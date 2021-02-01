@@ -35,7 +35,7 @@ export interface FetchProps<T> extends FetchStatelessCb<T> {
   /** set to true when fetching */
   loading: boolean;
   /** The response from the backend on fetched */
-  result: T;
+  result: T | undefined;
 }
 
 type FetchState<T> = {
@@ -56,6 +56,14 @@ export const useStatelessFetch = <T>(
   endpoint: string
 ): FetchStatelessCb<T> => {
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  // check first if token is provided
+  const token = checkToken();
+  if (token) headers['Authorization'] = token;
+  // check first whether tenantKey is defined
+  if (tenantKey) headers[tenantKey] = subDomain();
 
   const submit = async (
     body?: any | null,
@@ -65,13 +73,7 @@ export const useStatelessFetch = <T>(
     const req: RequestInit = {
       method,
       body: JSON.stringify(body),
-      headers: {
-        ...{
-          Authorization: checkToken(),
-          'Content-Type': 'application/json'
-        },
-        ...(tenantKey && { [tenantKey]: subDomain() })
-      }
+      headers: headers
     };
 
     const response: Response = await fetch(
