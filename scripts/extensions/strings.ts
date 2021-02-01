@@ -57,10 +57,16 @@ export function capitalize(
   return capitalized;
 }
 
+/**
+ * Checks whether the given str constains any numbers.
+ */
 export function hasNumbers(str: string): boolean {
   return /\d/.test(str);
 }
 
+/**
+ *  Checks whether the given str constains any whitespaces.
+ */
 export function hasWhiteSpace(s: string): boolean {
   return s.includes(' ');
 }
