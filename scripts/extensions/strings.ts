@@ -68,5 +68,5 @@ export function hasNumbers(str: string): boolean {
  *  Checks whether the given str constains any whitespaces.
  */
 export function hasWhiteSpace(s: string): boolean {
-  return s.includes(' ');
+  return s ? s.includes(' ') : false;
 }

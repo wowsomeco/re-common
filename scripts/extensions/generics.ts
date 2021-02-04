@@ -43,3 +43,7 @@ export function removeEmpty(obj: Record<string, any>) {
       .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
   );
 }
+
+export function isNullOrUndefined(o: any) {
+  return o === null || o === undefined;
+}
