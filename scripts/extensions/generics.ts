@@ -37,13 +37,18 @@ export function clone<T>(t: T): T {
  * string with value '' will get removed too
  */
 export function removeEmpty(obj: Record<string, any>) {
+  // TODO: define option for defining what to remove based on its type
   return Object.fromEntries(
     Object.entries(obj)
-      .filter(([, v]) => v)
+      .filter(([, v]) => (isBoolean(v) ? true : v))
       .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
   );
 }
 
 export function isNullOrUndefined(o: any) {
   return o === null || o === undefined;
+}
+
+export function isBoolean(n: any): boolean {
+  return !!n === n;
 }
