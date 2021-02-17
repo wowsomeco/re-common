@@ -31,17 +31,29 @@ export function clone<T>(t: T): T {
 }
 
 /**
- * Removes all empty properties from an object
- * including the default values for each type
- * e.g. number with value 0 will be removed
- * string with value '' will get removed too
+ * Removes all undefined or null properties
+ * including the nested props too
+ * as well as the ones in omit callbacks returning true
  */
-export function removeEmpty(obj: Record<string, any>) {
+export function removeEmpty(
+  obj: Record<string, any>,
+  omits?: ((v: any) => boolean)[]
+) {
+  const checkOmits = (v: any) => {
+    if (omits) {
+      for (const omit of omits) {
+        if (omit(v)) return false;
+      }
+    }
+
+    return true;
+  };
+
   // TODO: define option for defining what to remove based on its type
   return Object.fromEntries(
     Object.entries(obj)
-      .filter(([, v]) => (isBoolean(v) ? true : v))
-      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
+      .filter(([, v]) => (isNullOrUndefined(v) ? false : checkOmits(v)))
+      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v, omits) : v])
   );
 }
 

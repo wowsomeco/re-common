@@ -1,4 +1,11 @@
-import { clone, loop, mapRecord, removeEmpty, tap } from '../extensions';
+import {
+  clone,
+  isEmptyStr,
+  loop,
+  mapRecord,
+  removeEmpty,
+  tap
+} from '../extensions';
 
 interface TapModel {
   username: string;
@@ -34,7 +41,7 @@ describe('generics tests', () => {
     expect(cloneObj1[2]).toBe(3);
   });
 
-  test('remove empty tests', () => {
+  test('removeEmpty omit 0s and empty strings', () => {
     const obj1: Record<string, any> = {
       a: undefined,
       b: 100,
@@ -44,10 +51,12 @@ describe('generics tests', () => {
       f: {
         a: '',
         c: null
-      }
+      },
+      g: false
     };
 
-    const obj2 = removeEmpty(obj1);
+    const omits = [(v) => v === 0, (v) => isEmptyStr(v)];
+    const obj2 = removeEmpty(obj1, omits);
 
     // check whether obj 1 wont get modified
     expect(obj1.a).toBeUndefined();
@@ -55,11 +64,49 @@ describe('generics tests', () => {
     expect(obj1.e).toBe(0);
     // check the cloned obj2 wont contain the empty properties anymore
     expect(obj2.a).toBeUndefined();
+    // must be removed
     expect(obj2.c).toBeUndefined();
     expect(obj2.e).toBeUndefined();
     expect(obj2.f).toMatchObject({});
     expect(obj2.f.a).toBeUndefined();
     expect(obj2.f.c).toBeUndefined();
+    expect(obj2.g).toBeDefined();
+  });
+
+  test('removeEmpty omit 0s', () => {
+    const obj1: Record<string, any> = {
+      a: undefined,
+      b: 100,
+      c: '',
+      d: 'aaa',
+      e: 0,
+      f: {
+        a: '',
+        c: null,
+        e: 0
+      },
+      g: false,
+      h: -1,
+      i: ''
+    };
+
+    const omits = [(v) => v === 0];
+    const obj2 = removeEmpty(obj1, omits);
+
+    // check the cloned obj2 wont contain the empty properties anymore
+    expect(obj2.a).toBeUndefined();
+    // empty string must be removed
+    expect(obj2.c).toBeDefined();
+    // must be removed
+    expect(obj2.e).toBeUndefined();
+    expect(obj2.f).toMatchObject({});
+    expect(obj2.f.a).toBeDefined();
+    expect(obj2.f.c).toBeUndefined();
+    // must be removed
+    expect(obj2.f.e).toBeUndefined();
+    expect(obj2.g).toBeDefined();
+    expect(obj2.h).toBeDefined();
+    expect(obj2.i).toBeDefined();
   });
 
   test('loop tests', () => {

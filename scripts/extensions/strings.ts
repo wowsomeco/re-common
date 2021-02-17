@@ -70,3 +70,7 @@ export function hasNumbers(str: string): boolean {
 export function hasWhiteSpace(s: string): boolean {
   return s ? s.includes(' ') : false;
 }
+
+export function isEmptyStr(s: string): boolean {
+  return s === '';
+}
