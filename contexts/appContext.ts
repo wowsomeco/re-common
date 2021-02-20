@@ -30,8 +30,6 @@ export interface AppProvider {
   onAuthenticated: (model: any, token: string | undefined) => void;
   checkToken: () => string | null;
   logout: () => void;
-  /** Global notification */
-  notif: (msg: string, status: 'info' | 'error') => void;
 }
 
 export const AppContext = React.createContext<AppProvider>({} as AppProvider);

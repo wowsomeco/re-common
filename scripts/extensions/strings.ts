@@ -64,6 +64,10 @@ export function hasNumbers(str: string): boolean {
   return /\d/.test(str);
 }
 
+export function isDigitOnly(str: string): boolean {
+  return /^\d+$/.test(str);
+}
+
 /**
  *  Checks whether the given str constains any whitespaces.
  */
