@@ -64,3 +64,13 @@ export function isNullOrUndefined(o: any) {
 export function isBoolean(n: any): boolean {
   return !!n === n;
 }
+
+/**
+ * Tries to get a value from a key in an object
+ * @returns the value of the key or undefined
+ */
+export function getValue<T>(obj: Record<string, T>, key): T | undefined {
+  if (obj && obj.hasOwnProperty(key)) return obj[key];
+
+  return undefined;
+}

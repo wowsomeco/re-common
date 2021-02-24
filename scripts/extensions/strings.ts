@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export function hexToRgb(hex: string): Record<string, number> | undefined {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
@@ -77,4 +79,19 @@ export function hasWhiteSpace(s: string): boolean {
 
 export function isEmptyStr(s: string): boolean {
   return s === '';
+}
+
+/**
+ * Checks whether a string is an email
+ * gotten from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+ */
+export function isEmail(email: string, nullable: boolean = false): boolean {
+  if (nullable && !email) return true;
+
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
+export function fmtDate(date: string, fmt: string = 'DD-MM-YY'): string {
+  return dayjs(date).format(fmt);
 }
