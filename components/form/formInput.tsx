@@ -6,7 +6,7 @@ import { FormFieldProps } from './common';
 import { withError } from './utils';
 
 // TODO: might want to extend TextFieldProps later
-interface FormInputProps extends Omit<FormFieldProps, 'defaultValue'> {
+interface FormInputProps extends FormFieldProps {
   label: string;
   type?: React.InputHTMLAttributes<unknown>['type'];
   inputMode?: React.InputHTMLAttributes<unknown>['inputMode'];
@@ -18,6 +18,7 @@ interface FormInputProps extends Omit<FormFieldProps, 'defaultValue'> {
   multiline?: boolean;
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
+  readOnly?: boolean;
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -33,12 +34,15 @@ const FormInput: React.FC<FormInputProps> = ({
   required = false,
   fullWidth = true,
   multiline = false,
+  defaultValue = null,
+  readOnly = false,
   rules
 }) => {
   const { register, errors } = useFormContext();
 
   return (
     <TextField
+      defaultValue={defaultValue}
       name={name}
       inputRef={register(rules)}
       type={type}
@@ -47,6 +51,7 @@ const FormInput: React.FC<FormInputProps> = ({
       multiline={multiline}
       InputLabelProps={{ required }}
       InputProps={{
+        readOnly: readOnly,
         startAdornment: prefix,
         endAdornment: suffix,
         inputProps: {
