@@ -16,6 +16,7 @@ interface FormInputProps extends FormFieldProps {
   required?: boolean;
   fullWidth?: boolean;
   multiline?: boolean;
+  rows?: number;
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   readOnly?: boolean;
@@ -34,6 +35,7 @@ const FormInput: React.FC<FormInputProps> = ({
   required = false,
   fullWidth = true,
   multiline = false,
+  rows,
   defaultValue = null,
   readOnly = false,
   rules
@@ -49,6 +51,7 @@ const FormInput: React.FC<FormInputProps> = ({
       label={label}
       fullWidth={fullWidth}
       multiline={multiline}
+      rows={rows}
       InputLabelProps={{ required }}
       InputProps={{
         readOnly: readOnly,

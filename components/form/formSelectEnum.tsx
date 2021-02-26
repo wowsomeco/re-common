@@ -43,7 +43,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
 
   const [result, setResult] = React.useState<EnumModel[]>([]);
   const [fetching, setFetching] = React.useState(true);
-  const loading = result.length === 0;
+  const loading = fetching;
 
   const findNameById = (id: string) =>
     result.find((x) => x[optionId] === id)?.[optionName] || '';
