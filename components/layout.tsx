@@ -157,7 +157,9 @@ export const Layout: React.FC<LayoutProps> = ({
           </Drawer>
         </Hidden>
       </nav>
-      <main className={clsx(classes.content, 'bg-gray-50')}>{children}</main>
+      <main className={clsx(classes.content, 'bg-gray-50 overflow-y-scroll')}>
+        {children}
+      </main>
     </div>
   );
 };
