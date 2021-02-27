@@ -5,10 +5,10 @@ import { nanoid } from 'nanoid';
 import * as React from 'react';
 
 import { CommonProps } from '~w-common/components';
+import { Headline } from '~w-common/components/typography';
 import useFetchList, { FetchListState } from '~w-common/hooks/useFetchList';
 import useTableAction from '~w-common/hooks/useTableAction';
 
-import { Headline } from '../../../app/components/typography';
 import { Btn } from '../btn';
 import { Table } from './table';
 

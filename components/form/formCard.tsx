@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import * as React from 'react';
 
-import { Headline } from '~app/components/typography';
 import { CommonProps } from '~w-common/components';
+import { Headline } from '~w-common/components/typography';
 
 const FormCard: React.FC<CommonProps & { title: string }> = ({
   className,
