@@ -15,67 +15,68 @@ import { FiChevronLeft, FiChevronRight, FiMenu } from 'react-icons/fi';
 
 import { useAppProvider } from '~w-common/contexts/appContext';
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      height: '100vh'
-    },
-    drawer: {
-      [theme.breakpoints.up('sm')]: {
+const useStyles = (drawerWidth: number = 240) =>
+  makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        display: 'flex',
+        height: '100vh'
+      },
+      drawer: {
+        [theme.breakpoints.up('sm')]: {
+          width: drawerWidth,
+          flexShrink: 0
+        }
+      },
+      appBar: {
+        [theme.breakpoints.up('sm')]: {
+          width: `calc(100% - ${drawerWidth}px)`,
+          marginLeft: drawerWidth
+        }
+      },
+      menuButton: {
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+          display: 'none'
+        }
+      },
+      closeButton: {
+        [theme.breakpoints.up('sm')]: {
+          display: 'none'
+        }
+      },
+      // necessary for content to be below app bar
+      toolbar: {
+        ...theme.mixins.toolbar,
+        display: 'flex',
+        alignItems: 'center'
+      },
+      drawerPaper: {
         width: drawerWidth,
-        flexShrink: 0
+        overflowX: 'hidden'
+      },
+      content: {
+        flexGrow: 1,
+        paddingTop: theme.mixins.toolbar.minHeight
       }
-    },
-    appBar: {
-      [theme.breakpoints.up('sm')]: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth
-      }
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        display: 'none'
-      }
-    },
-    closeButton: {
-      [theme.breakpoints.up('sm')]: {
-        display: 'none'
-      }
-    },
-    // necessary for content to be below app bar
-    toolbar: {
-      ...theme.mixins.toolbar,
-      display: 'flex',
-      alignItems: 'center'
-    },
-    drawerPaper: {
-      width: drawerWidth,
-      overflowX: 'hidden'
-    },
-    content: {
-      flexGrow: 1,
-      paddingTop: theme.mixins.toolbar.minHeight
-    }
-  })
-);
+    })
+  );
 
 interface LayoutProps {
   sideBar: React.ReactNode;
+  sideBarWidth?: number;
   headerSlot?: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
   sideBar,
+  sideBarWidth = 240,
   headerSlot,
   children
 }) => {
   const { appName } = useAppProvider();
 
-  const classes = useStyles();
+  const classes = useStyles(sideBarWidth)();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 

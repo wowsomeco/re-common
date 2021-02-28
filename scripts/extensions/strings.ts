@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+import { lastIdx } from './arrays';
+
 export function hexToRgb(hex: string): Record<string, number> | undefined {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
@@ -94,4 +96,8 @@ export function isEmail(email: string, nullable: boolean = false): boolean {
 
 export function fmtDate(date: string, fmt: string = 'DD-MM-YY'): string {
   return dayjs(date).format(fmt);
+}
+
+export function lastSplit(str: string, separator: string): string | undefined {
+  return lastIdx(str.split(separator));
 }
