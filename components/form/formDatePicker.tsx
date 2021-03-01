@@ -75,4 +75,16 @@ export const FormYearPicker: React.FC<FormYearPickerProps> = (props) => {
   );
 };
 
+export const FormMonthYearPicker: React.FC<FormYearPickerProps> = (props) => {
+  return (
+    <FormDatePicker
+      openTo='year'
+      views={['year', 'month']}
+      inputFormat='YYYY-MM'
+      mask='____-__'
+      {...props}
+    />
+  );
+};
+
 export default FormDatePicker;
