@@ -99,8 +99,8 @@ export const Layout: React.FC<LayoutProps> = ({
       {isMobile ? (
         <div
           role='presentation'
-          onClick={handleDrawerToggle}
-          onKeyDown={handleDrawerToggle}
+          // onClick={handleDrawerToggle}
+          // onKeyDown={handleDrawerToggle}
         >
           {sideBar}
         </div>
