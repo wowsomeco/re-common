@@ -1,9 +1,15 @@
-import { FileModel } from '~app/models';
 import { useAppProvider } from '~w-common/contexts/appContext';
 import { useNotifProvider } from '~w-common/contexts/notifContext';
 import { subDomain } from '~w-common/scripts';
 
 import { useSafeState } from './useSafeState';
+
+export interface FileModel {
+  key: string;
+  url: string;
+  name: string;
+  type: string;
+}
 
 export interface FileUploadState {
   progress: number;
