@@ -1,11 +1,10 @@
 import TextField from '@material-ui/core/TextField';
 import * as React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { RegisterOptions, useFormContext } from 'react-hook-form';
 
 import { FormFieldProps } from './common';
 import { withError } from './utils';
 
-// TODO: might want to extend TextFieldProps later
 interface FormInputProps extends FormFieldProps {
   label: string;
   type?: React.InputHTMLAttributes<unknown>['type'];
@@ -67,6 +66,38 @@ const FormInput: React.FC<FormInputProps> = ({
       {...withError(name, errors)}
     />
   );
+};
+
+interface FormInputNumericProps
+  extends Omit<FormInputProps, 'type' | 'inputMode' | 'rules'> {
+  rules: Omit<RegisterOptions, 'valueAsDate' | 'valueAsNumber' | 'setValueAs'>;
+}
+
+export const FormInputNumber: React.FC<FormInputNumericProps> = ({
+  rules,
+  ...other
+}) => {
+  return (
+    <FormInput
+      type='number'
+      inputMode='numeric'
+      rules={{
+        valueAsNumber: true,
+        ...rules
+      }}
+      {...other}
+    />
+  );
+};
+
+interface FormInputNumProps extends Omit<FormInputNumericProps, 'step'> {}
+
+export const FormInputInt: React.FC<FormInputNumProps> = (props) => {
+  return <FormInputNumber step='1' {...props} />;
+};
+
+export const FormInputDouble: React.FC<FormInputNumProps> = (props) => {
+  return <FormInputNumber step='any' {...props} />;
 };
 
 export default FormInput;
