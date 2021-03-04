@@ -20,7 +20,7 @@ const useTableAction = (options: TableActionOptions): TableActionProps => {
   const { pathname } = useLocation();
   const history = useHistory();
 
-  const toDetail = React.useCallback((id: number | undefined) => {
+  const toDetail = React.useCallback((id: string | number | undefined) => {
     if (id) history.push(`${pathname}${destRoute(detailsRoute)}/${id}`);
   }, []);
 

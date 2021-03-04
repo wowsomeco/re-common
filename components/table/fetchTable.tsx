@@ -1,3 +1,4 @@
+import { LinearProgress } from '@material-ui/core';
 import Pagination from '@material-ui/core/Pagination';
 import Skeleton from '@material-ui/core/Skeleton';
 import clsx from 'clsx';
@@ -37,9 +38,16 @@ export const Td: React.FC<{ dataHeader?: string } & CommonProps> = ({
   );
 };
 
+export interface ActionCallback<T> {
+  item: T;
+  setDisabled: (flag: boolean) => void;
+  reload: () => void;
+}
+
 export interface FetchTableProps<T> extends CommonProps {
   idKey?: string;
   title: string;
+  addLabel?: string;
   endpoint: string;
   endpointCount: string;
   /* if supplied, then whenever the row gets clicked
@@ -50,7 +58,8 @@ export interface FetchTableProps<T> extends CommonProps {
   placeholder?: React.ReactNode;
   items: TableData<T>[];
   itemPerPage?: number;
-  action?: React.ReactNode;
+  disabled?: boolean;
+  action?: (cb: ActionCallback<T>) => React.ReactNode;
 }
 
 /**
@@ -64,6 +73,7 @@ export const FetchTable = <T extends Record<string, any>>(
   const {
     idKey = 'id',
     title,
+    addLabel = 'Add',
     endpoint,
     endpointCount,
     detailsRoute,
@@ -73,15 +83,18 @@ export const FetchTable = <T extends Record<string, any>>(
     ...other
   } = props;
 
-  const { toDetail, toNew } = useTableAction({
-    detailsRoute
-  });
+  const [disabled, setDisabled] = React.useState(false);
 
-  const { result = [], loading, count, page, setPage } = useFetchList<T>(
-    endpoint,
-    endpointCount,
-    new FetchListState(itemPerPage)
-  );
+  const { toDetail, toNew } = useTableAction({ detailsRoute });
+
+  const {
+    result = [],
+    loading,
+    count,
+    page,
+    setPage,
+    doFetch: reload
+  } = useFetchList<T>(endpoint, endpointCount, new FetchListState(itemPerPage));
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -90,12 +103,12 @@ export const FetchTable = <T extends Record<string, any>>(
   return loading ? (
     <div className='w-full mt-5'>
       <div className='flex justify-between items-center'>
-        <Skeleton width={50} />
-        <Skeleton width={50} />
+        <Skeleton height={35} width={100} />
+        <Skeleton height={35} width={50} />
       </div>
-      <Skeleton />
+      <Skeleton animation='wave' height={70} />
       <Skeleton animation={false} />
-      <Skeleton animation='wave' />
+      <Skeleton />
     </div>
   ) : (
     <>
@@ -108,45 +121,51 @@ export const FetchTable = <T extends Record<string, any>>(
             loading={loading}
             onClick={toNew}
           >
-            Tambah
+            {addLabel}
           </Btn>
         }
       >
         {title}
       </Headline>
-      <Table
-        {...other}
-        className='bg-white shadow rounded w-full'
-        data={result}
-        header={
-          <tr>
-            {items.map((item) => (
-              <th key={nanoid()} className='px-2 py-4'>
-                {item.header}
-              </th>
-            ))}
-            {action ? <th className='px-2 py-4'>Action</th> : null}
-          </tr>
-        }
-        eachRow={(data, i) => (
-          <tr
-            onClick={() => toDetail(data?.[idKey])}
-            onKeyPress={(e) =>
-              e.key === 'Enter' ? toDetail(data?.[idKey]) : null
-            }
-            key={i}
-            tabIndex={0}
-            className='border-t border-gray-100 hover:bg-gray-50 focus:bg-blue-50 cursor-pointer'
-          >
-            {items.map((item) => (
-              <Td key={nanoid()} dataHeader={item.header}>
-                {item.row(data)}
-              </Td>
-            ))}
-            {action}
-          </tr>
-        )}
-      />
+      <div className='w-full'>
+        {disabled ? <LinearProgress /> : null}
+        <Table
+          {...other}
+          className={clsx(
+            'bg-white shadow rounded w-full',
+            disabled && 'pointer-events-none'
+          )}
+          data={result}
+          header={
+            <tr>
+              {items.map((item) => (
+                <th key={nanoid()} className='px-2 py-4'>
+                  {item.header}
+                </th>
+              ))}
+              {action ? <th className='px-2 py-4'>Action</th> : null}
+            </tr>
+          }
+          eachRow={(data, i) => (
+            <tr
+              onClick={() => toDetail(data?.[idKey])}
+              onKeyPress={(e) =>
+                e.key === 'Enter' ? toDetail(data?.[idKey]) : null
+              }
+              key={i}
+              tabIndex={0}
+              className='border-t border-gray-100 hover:bg-gray-50 focus:bg-blue-50 cursor-pointer'
+            >
+              {items.map((item) => (
+                <Td key={nanoid()} dataHeader={item.header}>
+                  {item.row(data)}
+                </Td>
+              ))}
+              {action?.({ reload, setDisabled, item: data })}
+            </tr>
+          )}
+        />
+      </div>
       <div className='mt-5 flex justify-end'>
         <Pagination
           count={count}

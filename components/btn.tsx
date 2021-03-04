@@ -4,7 +4,7 @@ import * as React from 'react';
 import { SpinningCircles } from '~w-common/components';
 
 interface BtnProps extends ButtonProps<any> {
-  loading: boolean;
+  loading?: boolean;
   loadingColor?: string;
 }
 
@@ -14,7 +14,7 @@ interface BtnProps extends ButtonProps<any> {
  * when loading is true, the button is disabled automagically and a circular progress will show.
  */
 export const Btn: React.FC<BtnProps> = ({
-  loading,
+  loading = false,
   loadingColor = '#6c5ce7',
   children,
   ...btnProps
