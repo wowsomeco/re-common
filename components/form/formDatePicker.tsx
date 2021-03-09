@@ -9,12 +9,15 @@ import { withError } from './utils';
 
 interface FormDatePickerProps
   extends FormFieldProps,
-    Omit<DatePickerProps, 'value' | 'onChange' | 'renderInput'> {}
+    Omit<DatePickerProps, 'value' | 'onChange' | 'renderInput'> {
+  required?: boolean;
+}
 
 const FormDatePicker: React.FC<FormDatePickerProps> = ({
   name,
   rules,
   defaultValue = null,
+  required = false,
   inputFormat = 'YYYY-MM-DD',
   ...other
 }) => {
@@ -45,6 +48,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
               {...props}
               {...withError(name, errors)}
               fullWidth
+              InputLabelProps={{ required }}
               InputProps={{
                 ...props.InputProps,
                 readOnly: true
