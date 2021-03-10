@@ -31,9 +31,16 @@ export const useFileUpload = (endpoint: string): FileUploadState => {
       const xhr = new XMLHttpRequest();
       xhr.onload = () => {
         setProgress(100);
-        resolve(JSON.parse(xhr.responseText));
-
-        notif.next({ msg: 'File Successfully Uploaded', state: 'info' });
+        // response will be either the FileModel or {error:string}
+        const resp: Record<string, any> = JSON.parse(xhr.responseText);
+        const err = xhr.status !== 200;
+        // notify accordingly
+        notif.next({
+          msg: err ? resp?.error : 'File Successfully Uploaded',
+          state: err ? 'error' : 'info'
+        });
+        // reject when error, otherwise resolve
+        err ? reject(resp) : resolve(resp as FileModel);
       };
       xhr.onerror = reject;
       xhr.upload.onprogress = (ev) => {
