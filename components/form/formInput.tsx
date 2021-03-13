@@ -2,10 +2,10 @@ import TextField from '@material-ui/core/TextField';
 import * as React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
 
-import { FormFieldProps } from './common';
+import type { FormFieldProps } from './common';
 import { withError } from './utils';
 
-interface FormInputProps extends FormFieldProps {
+export interface FormInputProps extends FormFieldProps {
   label: string;
   type?: React.InputHTMLAttributes<unknown>['type'];
   inputMode?: React.InputHTMLAttributes<unknown>['inputMode'];
