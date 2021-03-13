@@ -19,6 +19,7 @@ export interface FormInputProps extends FormFieldProps {
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   readOnly?: boolean;
+  autoComplete?: React.InputHTMLAttributes<unknown>['autoComplete'];
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -29,6 +30,7 @@ const FormInput: React.FC<FormInputProps> = ({
   min,
   max,
   step,
+  autoComplete = 'on',
   type = 'text',
   inputMode = 'none',
   required = false,
@@ -51,6 +53,7 @@ const FormInput: React.FC<FormInputProps> = ({
       fullWidth={fullWidth}
       multiline={multiline}
       rows={rows}
+      autoComplete={autoComplete}
       InputLabelProps={{ required }}
       InputProps={{
         readOnly: readOnly,

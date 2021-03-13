@@ -19,6 +19,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
   defaultValue = null,
   required = false,
   inputFormat = 'YYYY-MM-DD',
+  disableFuture = false,
   ...other
 }) => {
   const { errors, control } = useFormContext();
@@ -37,6 +38,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
         <DatePicker
           {...other}
           inputFormat={inputFormat}
+          disableFuture={disableFuture}
           value={value}
           onChange={(v?: Dayjs) => {
             // retrieve Dayjs obj onChange
