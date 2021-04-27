@@ -6,7 +6,7 @@ import { useMountedState } from 'react-use';
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
 
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 /** The response from the rest API */
 export interface Resp<T> {
@@ -52,7 +52,7 @@ type FetchState<T> = {
  * @param endpoint API URL
  */
 export const useStatelessFetch = <T>(
-  method: Method,
+  method: HttpMethod,
   endpoint: string
 ): FetchStatelessCb<T> => {
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
@@ -103,7 +103,7 @@ export const useStatelessFetch = <T>(
  * @param endpoint the rest api endpoint without the prefix forward slash (/)
  */
 export const useFetch = <T>(
-  method: Method,
+  method: HttpMethod,
   endpoint: string,
   defaultLoading = false
 ): FetchProps<T> => {

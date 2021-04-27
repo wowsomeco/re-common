@@ -2,7 +2,10 @@ import { useAppProvider } from '~w-common/contexts/appContext';
 import { useNotifProvider } from '~w-common/contexts/notifContext';
 import { subDomain } from '~w-common/scripts';
 
+import { HttpMethod } from './useHttp';
 import { useSafeState } from './useSafeState';
+
+export type UploadMethod = Exclude<HttpMethod, 'GET' | 'DELETE'>;
 
 export interface FileModel {
   key: string;
@@ -18,7 +21,10 @@ export interface FileUploadState {
   upload: (file: File) => Promise<FileModel>;
 }
 
-export const useFileUpload = (endpoint: string): FileUploadState => {
+export const useFileUpload = (
+  endpoint: string,
+  method: UploadMethod = 'POST'
+): FileUploadState => {
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
   const { notif } = useNotifProvider();
 
@@ -50,7 +56,7 @@ export const useFileUpload = (endpoint: string): FileUploadState => {
         }
       };
 
-      xhr.open('POST', apiUrl(endpoint));
+      xhr.open(method.toString(), apiUrl(endpoint));
       const token = checkToken();
       if (token) xhr.setRequestHeader('Authorization', token);
       if (tenantKey) xhr.setRequestHeader(tenantKey, subDomain());

@@ -10,7 +10,11 @@ import { FileWithPath, useDropzone } from 'react-dropzone';
 import { FiDownload, FiEye } from 'react-icons/fi';
 
 import { Btn } from '~w-common/components/btn';
-import { FileModel, useFileUpload } from '~w-common/hooks/useFileUpload';
+import {
+  FileModel,
+  UploadMethod,
+  useFileUpload
+} from '~w-common/hooks/useFileUpload';
 import { TW_CENTER } from '~w-common/scripts';
 import { capitalize, formatBytes, saveAs } from '~w-common/scripts/extensions';
 
@@ -48,6 +52,7 @@ interface FormFileProps {
   label: string;
   endpoint: string;
   accept?: string | string[];
+  method?: UploadMethod;
   defaultValue: FileModel | undefined;
   onUploaded: (f: FileModel) => void;
 }
@@ -124,9 +129,10 @@ const FormFile: React.FC<FormFileProps> = ({
   endpoint,
   accept,
   defaultValue,
-  onUploaded
+  onUploaded,
+  method = 'POST'
 }) => {
-  const { progress, uploading, upload } = useFileUpload(endpoint);
+  const { progress, uploading, upload } = useFileUpload(endpoint, method);
 
   const {
     acceptedFiles,
