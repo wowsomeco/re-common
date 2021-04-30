@@ -6,6 +6,8 @@ import { useMountedState } from 'react-use';
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
 
+export type HttpContentType = 'application/json' | 'multipart/form-data';
+
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 /** The response from the rest API */
@@ -53,11 +55,12 @@ type FetchState<T> = {
  */
 export const useStatelessFetch = <T>(
   method: HttpMethod,
-  endpoint: string
+  endpoint: string,
+  contentType: HttpContentType = 'application/json'
 ): FetchStatelessCb<T> => {
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
-  const headers = {
-    'Content-Type': 'application/json'
+  const headers: HeadersInit = {
+    'Content-Type': contentType
   };
   // check first if token is provided
   const token = checkToken();
@@ -66,13 +69,23 @@ export const useStatelessFetch = <T>(
   if (tenantKey) headers[tenantKey] = subDomain();
 
   const submit = async (
-    body?: any | null,
+    body?: BodyInit | null,
     query: string | undefined = undefined
   ): Promise<Resp<T>> => {
+    let theBody = body;
+    // TODO: might need to test it for different use cases later
+    // check if the content type is json
+    if (contentType === 'application/json') {
+      // if the body is not string e.g. a plain object, convert it to string
+      const shouldStringify = !!theBody && typeof theBody !== 'string';
+      if (shouldStringify) {
+        theBody = JSON.stringify(body);
+      }
+    }
     // if tenantKey is defined, then set it with the cur window subdomain as the value.
     const req: RequestInit = {
       method,
-      body: JSON.stringify(body),
+      body: theBody,
       headers: headers
     };
 
@@ -86,7 +99,6 @@ export const useStatelessFetch = <T>(
     const ok = response.ok;
     const data = await response.json();
     const error = data?.error;
-    // dont change state when no longer mounted
 
     return { status, ok, data, error };
   };
@@ -105,14 +117,19 @@ export const useStatelessFetch = <T>(
 export const useFetch = <T>(
   method: HttpMethod,
   endpoint: string,
-  defaultLoading = false
+  defaultLoading = false,
+  contentType: HttpContentType = 'application/json'
 ): FetchProps<T> => {
   const [state, setState] = React.useState<FetchState<T>>({
     loading: defaultLoading,
     result: undefined
   });
 
-  const { submit: doFetch } = useStatelessFetch<T>(method, endpoint);
+  const { submit: doFetch } = useStatelessFetch<T>(
+    method,
+    endpoint,
+    contentType
+  );
 
   const isMounted = useMountedState();
 
