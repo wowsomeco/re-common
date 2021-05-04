@@ -7,6 +7,8 @@ import { useFetch } from '~w-common/hooks';
 interface FetchOneProps<T> {
   result: T | undefined;
   loading: boolean;
+  /** can be used to re fetch the data again by the caller*/
+  doFetch: () => Promise<void>;
 }
 
 /**
@@ -17,20 +19,24 @@ const useFetchOne = <T>(
   execOnMounted: boolean
 ): FetchOneProps<T> => {
   const history = useHistory();
-  const { submit, loading, result } = useFetch<T>('GET', endpoint, false);
+  const { submit, loading, result } = useFetch<T>('GET', endpoint);
 
-  useAsync(async () => {
-    if (execOnMounted) {
-      const { status } = await submit();
-      if (status === 404) {
-        history.push(PAGE_NOT_FOUND);
-      }
+  // fetch the items from the backend
+  const doFetch = async () => {
+    const { status } = await submit();
+    if (status === 404) {
+      history.push(PAGE_NOT_FOUND);
     }
+  };
+  // do fetch on mounted if execOnMounted is true OR when the endpoint changes.
+  useAsync(async () => {
+    if (execOnMounted) await doFetch();
   }, [endpoint]);
 
   return {
     result,
-    loading
+    loading,
+    doFetch
   };
 };
 
