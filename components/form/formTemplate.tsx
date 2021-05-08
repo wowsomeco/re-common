@@ -79,7 +79,7 @@ const FormTemplate = <T extends Record<string, any>>(
           <Skeleton animation='wave' />
         </div>
       ) : (
-        <form onSubmit={handleSubmit(doSubmit)}>
+        <form onSubmit={handleSubmit((v) => doSubmit(v as T))}>
           {fields(isNew, loading)}
           <div className='flex justify-end sticky bottom-0 right-0 py-5'>
             <Btn

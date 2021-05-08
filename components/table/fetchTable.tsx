@@ -60,6 +60,7 @@ export interface FetchTableProps<T> extends CommonProps {
   itemPerPage?: number;
   disabled?: boolean;
   action?: (cb: ActionCallback<T>) => React.ReactNode;
+  onRowClick?: (row: T) => void;
 }
 
 /**
@@ -80,6 +81,7 @@ export const FetchTable = <T extends Record<string, any>>(
     items,
     itemPerPage = 5,
     action,
+    onRowClick,
     ...other
   } = props;
 
@@ -99,6 +101,9 @@ export const FetchTable = <T extends Record<string, any>>(
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
+
+  const handleRowClick = (model: T) =>
+    onRowClick ? onRowClick(model) : toDetail(model?.[idKey]);
 
   return loading ? (
     <div className='w-full mt-5'>
@@ -148,9 +153,9 @@ export const FetchTable = <T extends Record<string, any>>(
           }
           eachRow={(data, i) => (
             <tr
-              onClick={() => toDetail(data?.[idKey])}
+              onClick={() => handleRowClick(data)}
               onKeyPress={(e) =>
-                e.key === 'Enter' ? toDetail(data?.[idKey]) : null
+                e.key === 'Enter' ? handleRowClick(data) : null
               }
               key={i}
               tabIndex={0}
