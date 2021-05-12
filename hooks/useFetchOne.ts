@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 import { useAsync } from 'react-use';
 
 import { PAGE_NOT_FOUND } from '~app/scripts/constants';
-import { useFetch } from '~w-common/hooks';
+import { useFetchJson } from '~w-common/hooks';
 
 interface FetchOneProps<T> {
   result: T | undefined;
@@ -19,7 +19,10 @@ const useFetchOne = <T>(
   execOnMounted: boolean
 ): FetchOneProps<T> => {
   const history = useHistory();
-  const { submit, loading, result } = useFetch<T>('GET', endpoint);
+  const { submit, loading, result } = useFetchJson<T>({
+    method: 'GET',
+    endpoint
+  });
 
   // fetch the items from the backend
   const doFetch = async () => {

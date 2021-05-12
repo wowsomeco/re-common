@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useAsync } from 'react-use';
 
 import { Btn } from '~w-common/components/btn';
-import { useStatelessFetch } from '~w-common/hooks';
+import { useStatelessFetchJson } from '~w-common/hooks';
 import useReloadForm from '~w-common/hooks/useReloadForm';
 import useSubmit from '~w-common/hooks/useSubmit';
 
@@ -57,7 +57,10 @@ const FormTemplate = <T extends Record<string, any>>(
   // fetch data if update
   const history = useHistory();
   const [fetching, setFetching] = React.useState<boolean>(!isNew);
-  const { submit: get } = useStatelessFetch<T>('GET', getEndpoint);
+  const { submit: get } = useStatelessFetchJson<T>({
+    method: 'GET',
+    endpoint: getEndpoint
+  });
   useAsync(async () => {
     if (!isNew) {
       const { data, status } = await get();

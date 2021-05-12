@@ -6,9 +6,18 @@ import { useMountedState } from 'react-use';
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
 
-export type HttpContentType = 'application/json' | 'multipart/form-data';
+export type HttpContentType =
+  | 'application/json'
+  | 'multipart/form-data'
+  | undefined;
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+export type SubmitCallback<T> = (
+  body?: any | null,
+  /** additional query that gets concatenated with the provided endpoint in [[useStatelessFetch]] on submit */
+  query?: any | undefined
+) => Promise<Resp<T>>;
 
 /** The response from the rest API */
 export interface Resp<T> {
@@ -27,7 +36,7 @@ export interface Resp<T> {
  */
 export interface FetchStatelessCb<T> {
   /** a function that can be used to fetch from the server */
-  submit: (body?: any | null, query?: any | undefined) => Promise<Resp<T>>;
+  submit: SubmitCallback<T>;
 }
 
 /**
@@ -45,23 +54,35 @@ type FetchState<T> = {
   result?: T | undefined;
 };
 
+interface FetchOptionsBase {
+  /** the Http Method (GET,POST,PUT,DELETE) */
+  method: HttpMethod;
+  /** the rest api endpoint without the prefix forward slash (/) */
+  endpoint: string;
+}
+
+interface FetchOptions extends FetchOptionsBase {
+  contentType: HttpContentType;
+}
+
 /**
  * Hook that wraps fetch with app context configuration accordingly.
  * This hook is stateless, it only returns the callback function for submitting.
+ * TODO: might want to change the params to object later.
  *
  * @returns submit callback that can be triggered by the caller.
  * @param method Http Method
  * @param endpoint API URL
+ * @param contentType The content type, one of [[HttpContentType]]
  */
 export const useStatelessFetch = <T>(
-  method: HttpMethod,
-  endpoint: string,
-  contentType: HttpContentType = 'application/json'
+  options: FetchOptions
 ): FetchStatelessCb<T> => {
+  const { method, endpoint, contentType } = options;
+
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
-  const headers: HeadersInit = {
-    'Content-Type': contentType
-  };
+  const headers: HeadersInit = {};
+  if (contentType) headers['Content-Type'] = contentType;
   // check first if token is provided
   const token = checkToken();
   if (token) headers['Authorization'] = token;
@@ -106,30 +127,29 @@ export const useStatelessFetch = <T>(
   return { submit };
 };
 
+export const useStatelessFetchJson = <T>(
+  options: FetchOptionsBase
+): FetchStatelessCb<T> =>
+  useStatelessFetch<T>({ ...options, contentType: 'application/json' });
+
 /**
  * The fetch api hook, utilizing fetch under the hood.
  * This hook is stateful
  * @see [[FetchProps]] for more details about what the caller can do with this hook.
  *
- * @param method the Http Method (GET,POST,PUT,DELETE)
- * @param endpoint the rest api endpoint without the prefix forward slash (/)
+ * @param options the fetch options
+ * @param defaultLoading the default value of the loading state, false if undefined
  */
 export const useFetch = <T>(
-  method: HttpMethod,
-  endpoint: string,
-  defaultLoading = false,
-  contentType: HttpContentType = 'application/json'
+  options: FetchOptions,
+  defaultLoading = false
 ): FetchProps<T> => {
   const [state, setState] = React.useState<FetchState<T>>({
     loading: defaultLoading,
     result: undefined
   });
 
-  const { submit: doFetch } = useStatelessFetch<T>(
-    method,
-    endpoint,
-    contentType
-  );
+  const { submit: doFetch } = useStatelessFetch<T>(options);
 
   const isMounted = useMountedState();
 
@@ -151,3 +171,9 @@ export const useFetch = <T>(
 
   return { loading: state.loading, result: state.result, submit };
 };
+
+export const useFetchJson = <T>(
+  options: FetchOptionsBase,
+  defaultLoading?: boolean
+): FetchProps<T> =>
+  useFetch<T>({ ...options, contentType: 'application/json' }, defaultLoading);

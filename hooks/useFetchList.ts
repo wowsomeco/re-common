@@ -1,6 +1,6 @@
 import { useAsync } from 'react-use';
 
-import { useFetch, useStatelessFetch } from '~w-common/hooks';
+import { useFetchJson, useStatelessFetchJson } from '~w-common/hooks';
 import { useSafeState } from '~w-common/hooks/useSafeState';
 
 export class FetchListState {
@@ -71,12 +71,15 @@ const useFetchList = <T>(
 ): FetchListProps<T> => {
   const [state, setState] = useSafeState<FetchListState>(defaultState);
 
-  const { submit: fetchCount } = useStatelessFetch<Record<string, number>>(
-    'GET',
-    countEndpoint
-  );
+  const { submit: fetchCount } = useStatelessFetchJson<Record<string, number>>({
+    method: 'GET',
+    endpoint: countEndpoint
+  });
 
-  const { submit, loading, result } = useFetch<T[]>('GET', endpoint, true);
+  const { submit, loading, result } = useFetchJson<T[]>(
+    { method: 'GET', endpoint },
+    true
+  );
 
   // callback from parent to reset state of the current page
   const setPage = (p: number) => {

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { useMountedState } from 'react-use';
 
-import { useStatelessFetch } from '~w-common/hooks';
+import { useStatelessFetchJson } from '~w-common/hooks';
 
 import { FormFieldProps } from './common';
 import { withError } from './utils';
@@ -39,7 +39,10 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
   optionId = 'id',
   optionName = 'name'
 }) => {
-  const { submit } = useStatelessFetch<EnumModel[]>('GET', endpoint || '');
+  const { submit } = useStatelessFetchJson<EnumModel[]>({
+    method: 'GET',
+    endpoint: endpoint || ''
+  });
 
   const [result, setResult] = React.useState<EnumModel[]>([]);
   const [fetching, setFetching] = React.useState(true);

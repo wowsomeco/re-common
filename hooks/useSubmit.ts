@@ -3,6 +3,8 @@ import { useNotifProvider } from '~w-common/contexts/notifContext';
 import { Resp, useFetch } from '~w-common/hooks';
 import { removeEmpty } from '~w-common/scripts';
 
+import { HttpContentType } from './useHttp';
+
 type OnSubmitProps<T> = {
   doSubmit: (model: T) => Promise<void>;
   loading: boolean;
@@ -23,6 +25,7 @@ export interface SubmitOptions<T> {
   extraPayload?: Record<string, any>;
   /** callback of values in the payload that you want to omit by returning true for each of them */
   omit?: ((v: any) => boolean)[];
+  contentType?: HttpContentType;
 }
 
 /**
@@ -36,10 +39,15 @@ const useSubmit = <T>(options: SubmitOptions<T>): OnSubmitProps<T> => {
     whitelist,
     onSubmitted,
     extraPayload = {},
-    omit
+    omit,
+    contentType = 'application/json'
   } = options;
   const { notif } = useNotifProvider();
-  const { submit, loading } = useFetch<T>(isNew ? 'POST' : 'PUT', endpoint);
+  const { submit, loading } = useFetch<T>({
+    method: isNew ? 'POST' : 'PUT',
+    endpoint,
+    contentType
+  });
 
   const doSubmit = async (model: T) => {
     const payload = Object.assign(
