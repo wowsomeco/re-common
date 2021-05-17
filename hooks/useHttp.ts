@@ -6,10 +6,7 @@ import { useMountedState } from 'react-use';
 import { useAppProvider } from '../contexts/appContext';
 import { subDomain } from '../scripts';
 
-export type HttpContentType =
-  | 'application/json'
-  | 'multipart/form-data'
-  | undefined;
+export type HttpContentType = 'application/json' | 'multipart/form-data';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -62,7 +59,7 @@ interface FetchOptionsBase {
 }
 
 interface FetchOptions extends FetchOptionsBase {
-  contentType: HttpContentType;
+  contentType?: HttpContentType;
 }
 
 /**
