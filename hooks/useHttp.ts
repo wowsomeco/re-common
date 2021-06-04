@@ -115,7 +115,7 @@ export const useStatelessFetch = <T>(
     // e.g. callbacks when unauthorized, etc...
     const status = response.status;
     const ok = response.ok;
-    const data = await response.json();
+    const data = ok && (await response.json());
     const error = data?.error;
 
     return { status, ok, data, error };
