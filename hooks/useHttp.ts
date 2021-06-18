@@ -84,7 +84,12 @@ interface FetchOptions extends FetchOptionsBase {
 export const useStatelessFetch = <T>(
   options: FetchOptions
 ): FetchStatelessCb<T> => {
-  const { method, endpoint, contentType } = options;
+  const {
+    method,
+    endpoint,
+    contentType,
+    expectedResponseType = 'json'
+  } = options;
 
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
   const headers: HeadersInit = {};
@@ -129,11 +134,7 @@ export const useStatelessFetch = <T>(
     let dataTypeError: any;
 
     try {
-      if (options.expectedResponseType) {
-        data = await response[options.expectedResponseType]();
-      } else {
-        data = await response.json();
-      }
+      data = await response[expectedResponseType]();
     } catch (err) {
       dataTypeError = err;
     }
