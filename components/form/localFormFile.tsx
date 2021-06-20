@@ -39,13 +39,14 @@ const rejectStyle: React.CSSProperties = {
   borderColor: '#ff1744'
 };
 
-interface LocalFormFileProps {
+interface FormFileProps {
   label: string;
   accept?: string | string[];
   defaultValue?: FileModel;
   onUpload?: (f: File) => Promise<void>;
   uploading?: boolean;
   onChange?: (f: File) => void;
+  renderLoader: () => React.ReactNode;
 }
 
 const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
@@ -62,9 +63,9 @@ const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
   return downloading ? (
     <CircularProgress />
   ) : (
-    <Tooltip title='Download' arrow>
+    <Tooltip title="Download" arrow>
       <IconButton onClick={download}>
-        <FiDownload className='cursor-pointer text-green-500' />
+        <FiDownload className="cursor-pointer text-green-500" />
       </IconButton>
     </Tooltip>
   );
@@ -75,9 +76,9 @@ const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
 
   return (
     <>
-      <Tooltip title='Show File' arrow>
+      <Tooltip title="Show File" arrow>
         <IconButton onClick={() => setOpenPreview(true)}>
-          <FiEye className='cursor-pointer text-blue-500' />
+          <FiEye className="cursor-pointer text-blue-500" />
         </IconButton>
       </Tooltip>
       <FilePreview
@@ -89,16 +90,14 @@ const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
   );
 };
 
-/**
- * FormFile without fetch
- */
-const LocalFormFile: React.FC<LocalFormFileProps> = ({
+const LocalFormFile: React.FC<FormFileProps> = ({
   label,
   accept,
   defaultValue,
   onUpload,
   uploading = false,
-  onChange
+  onChange,
+  renderLoader
 }) => {
   const {
     acceptedFiles,
@@ -147,14 +146,14 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
   const canUpload = acceptedFiles.length > 0 && !uploadErr;
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <div
         style={{ minHeight: '50px' }}
-        className='flex items-center justify-between mb-2'
+        className="flex items-center justify-between mb-2"
       >
-        <p className='text-gray-500'>{label}</p>
+        <p className="text-gray-500">{label}</p>
         {defaultValue ? (
-          <div className='flex'>
+          <div className="flex">
             <Downloader file={defaultValue} />
             <Previewer file={defaultValue} />
           </div>
@@ -163,25 +162,29 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
       <div {...getRootProps({ style })}>
         {uploading ? (
           <div className={TW_CENTER}>
-            <p className='cursor-pointer hover:text-blue-500'>Uploading...</p>
+            {renderLoader ? (
+              renderLoader()
+            ) : (
+              <p className="cursor-pointer hover:text-blue-500">Uploading...</p>
+            )}
           </div>
         ) : (
           <>
             <input {...getInputProps()} />
-            <p className='cursor-pointer hover:text-blue-500'>
+            <p className="cursor-pointer hover:text-blue-500">
               Drag and drop the file here, or click to upload
             </p>
           </>
         )}
       </div>
-      <div className='flex items-center justify-between mt-2'>
+      <div className="flex items-center justify-between mt-2">
         {!canUpload ? (
-          <p className='text-red-400'>{uploadErr}</p>
+          <p className="text-red-400">{uploadErr}</p>
         ) : (
           acceptedFileItems
         )}
         {canUpload && !onChange ? (
-          <Btn onClick={doUpload} loading={uploading} variant='outlined'>
+          <Btn onClick={doUpload} loading={uploading} variant="outlined">
             Upload
           </Btn>
         ) : null}
