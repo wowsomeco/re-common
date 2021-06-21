@@ -10,6 +10,14 @@ export type HttpContentType = 'application/json' | 'multipart/form-data';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+/** https://developer.mozilla.org/en-US/docs/Web/API/Body */
+export type HttpResponseBodyMethod =
+  | 'arrayBuffer'
+  | 'blob'
+  | 'formData'
+  | 'json'
+  | 'text';
+
 export type SubmitCallback<T> = (
   body?: any | null,
   /** additional query that gets concatenated with the provided endpoint in [[useStatelessFetch]] on submit */
@@ -60,6 +68,7 @@ interface FetchOptionsBase {
 
 interface FetchOptions extends FetchOptionsBase {
   contentType?: HttpContentType;
+  expectedResponseType?: HttpResponseBodyMethod;
 }
 
 /**
@@ -75,7 +84,12 @@ interface FetchOptions extends FetchOptionsBase {
 export const useStatelessFetch = <T>(
   options: FetchOptions
 ): FetchStatelessCb<T> => {
-  const { method, endpoint, contentType } = options;
+  const {
+    method,
+    endpoint,
+    contentType,
+    expectedResponseType = 'json'
+  } = options;
 
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
   const headers: HeadersInit = {};
@@ -115,10 +129,17 @@ export const useStatelessFetch = <T>(
     // e.g. callbacks when unauthorized, etc...
     const status = response.status;
     const ok = response.ok;
-    const data = ok && (await response.json());
-    const error = data?.error;
 
-    return { status, ok, data, error };
+    let data: any;
+    let dataTypeError: any;
+
+    try {
+      data = await response[expectedResponseType]();
+    } catch (err) {
+      dataTypeError = err;
+    }
+
+    return { status, ok, data, error: data?.error || dataTypeError };
   };
 
   return { submit };
