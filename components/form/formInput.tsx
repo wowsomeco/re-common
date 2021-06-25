@@ -39,7 +39,8 @@ const FormInput: React.FC<FormInputProps> = ({
   rows,
   defaultValue = null,
   readOnly = false,
-  rules
+  rules,
+  onChange
 }) => {
   const { register, errors } = useFormContext();
 
@@ -66,6 +67,7 @@ const FormInput: React.FC<FormInputProps> = ({
           inputMode
         }
       }}
+      onChange={onChange}
       {...withError(name, errors)}
     />
   );

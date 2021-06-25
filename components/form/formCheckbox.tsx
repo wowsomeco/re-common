@@ -15,7 +15,8 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
   name,
   rules,
   defaultValue = null,
-  label
+  label,
+  onChange
 }) => {
   const { control } = useFormContext();
   const v: boolean | undefined = useWatch({ control, name: name });
@@ -33,7 +34,11 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
           render={(props) => (
             <Checkbox
               checked={v || false}
-              onChange={(e) => props.onChange(e.target.checked)}
+              onChange={(e) => {
+                props.onChange(e.target.checked);
+
+                onChange && onChange(e);
+              }}
             />
           )}
         />
