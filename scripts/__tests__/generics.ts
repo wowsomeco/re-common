@@ -109,6 +109,34 @@ describe('generics tests', () => {
     expect(obj2.i).toBeDefined();
   });
 
+  test('removeEmpty omit 0s in array members', () => {
+    const obj1: Record<string, any> = {
+      name: 'string',
+      email: undefined,
+      lahans: [
+        {
+          noLegalitas: 'string',
+          polygon: null,
+          alamat: '',
+          provId: 0
+        }
+      ]
+    };
+
+    const omits = [(v) => v === 0];
+    const obj2 = removeEmpty(obj1, omits);
+
+    expect(obj2.name).toBeDefined();
+    // check the cloned obj2 wont contain the empty properties anymore
+    expect(obj2.email).toBeUndefined();
+    expect(obj2.lahans[0].noLegalitas).toBeDefined();
+    expect(obj2.lahans[0].polygon).toBeUndefined();
+    // empty string
+    expect(obj2.lahans[0].alamat).toBeDefined();
+    // must be removed
+    expect(obj2.lahans[0].provId).toBeUndefined();
+  });
+
   test('loop tests', () => {
     const arr1: number[] = [1, 4, 7, 10, 15, 3];
     const arr2: number[] = [];
