@@ -8,9 +8,10 @@ import { FormFieldProps } from './common';
 import { withError } from './utils';
 
 interface FormDatePickerProps
-  extends FormFieldProps,
+  extends Omit<FormFieldProps, 'onChange'>,
     Omit<DatePickerProps, 'value' | 'onChange' | 'renderInput'> {
   required?: boolean;
+  onChange?: (v: Dayjs | undefined) => void;
 }
 
 const FormDatePicker: React.FC<FormDatePickerProps> = ({
@@ -20,6 +21,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
   required = false,
   inputFormat = 'YYYY-MM-DD',
   disableFuture = false,
+  onChange,
   ...other
 }) => {
   const { errors, control } = useFormContext();
@@ -44,6 +46,8 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
             // retrieve Dayjs obj onChange
             // format accordingly
             p.onChange(v?.format(inputFormat));
+
+            onChange && onChange(v);
           }}
           renderInput={(props) => (
             <TextField

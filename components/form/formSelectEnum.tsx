@@ -8,12 +8,13 @@ import { useStatelessFetchJson } from '~w-common/hooks';
 import { FormFieldProps } from './common';
 import { withError } from './utils';
 
-export interface SelectEnumProps extends FormFieldProps {
+export interface SelectEnumProps extends Omit<FormFieldProps, 'onChange'> {
   label: string;
   endpoint: string | null;
   disabled?: boolean;
   optionId?: string;
   optionName?: string;
+  onChange?: (v: string | null) => void;
 }
 
 const DummyAutoComplete: React.FC<{ label: string }> = ({ label }) => {
@@ -37,7 +38,8 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
   endpoint,
   disabled,
   optionId = 'id',
-  optionName = 'name'
+  optionName = 'name',
+  onChange
 }) => {
   const { submit } = useStatelessFetchJson<EnumModel[]>({
     method: 'GET',
@@ -112,6 +114,8 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
           {...props}
           onChange={(_, data) => {
             props.onChange(data);
+
+            onChange && onChange(data);
           }}
         />
       )}
