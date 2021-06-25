@@ -111,21 +111,14 @@ describe('generics tests', () => {
 
   test('removeEmpty omit 0s in array members', () => {
     const obj1: Record<string, any> = {
-      values: [
+      name: 'string',
+      email: undefined,
+      lahans: [
         {
-          a: undefined,
-          b: 100,
-          c: '',
-          d: 'aaa',
-          e: 0,
-          f: {
-            a: '',
-            c: null,
-            e: 0
-          },
-          g: false,
-          h: -1,
-          i: ''
+          noLegalitas: 'string',
+          polygon: null,
+          alamat: '',
+          provId: 0
         }
       ]
     };
@@ -133,20 +126,15 @@ describe('generics tests', () => {
     const omits = [(v) => v === 0];
     const obj2 = removeEmpty(obj1, omits);
 
+    expect(obj2.name).toBeDefined();
     // check the cloned obj2 wont contain the empty properties anymore
-    expect(obj2.values[0].a).toBeUndefined();
-    // empty string must be removed
-    expect(obj2.values[0].c).toBeDefined();
+    expect(obj2.email).toBeUndefined();
+    expect(obj2.lahans[0].noLegalitas).toBeDefined();
+    expect(obj2.lahans[0].polygon).toBeUndefined();
+    // empty string
+    expect(obj2.lahans[0].alamat).toBeDefined();
     // must be removed
-    expect(obj2.values[0].e).toBeUndefined();
-    expect(obj2.values[0].f).toMatchObject({});
-    expect(obj2.values[0].f.a).toBeDefined();
-    expect(obj2.values[0].f.c).toBeUndefined();
-    // must be removed
-    expect(obj2.values[0].f.e).toBeUndefined();
-    expect(obj2.values[0].g).toBeDefined();
-    expect(obj2.values[0].h).toBeDefined();
-    expect(obj2.values[0].i).toBeDefined();
+    expect(obj2.lahans[0].provId).toBeUndefined();
   });
 
   test('loop tests', () => {
