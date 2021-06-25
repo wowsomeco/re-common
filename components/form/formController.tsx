@@ -1,14 +1,12 @@
+import get from 'lodash.get';
 import * as React from 'react';
 import {
   Controller,
   ControllerRenderProps,
-  FieldError,
   InputState,
   UseControllerOptions,
   useFormContext
 } from 'react-hook-form';
-
-import { getValue } from '~w-common/scripts';
 
 interface RenderProps extends ControllerRenderProps {
   errorMessage?: string;
@@ -27,7 +25,7 @@ const FormController: React.FC<FormControllerProps> = ({
 }) => {
   const { control, errors } = useFormContext();
 
-  const errorMessage = getValue<FieldError>(errors, name)?.message;
+  const errorMessage = get(errors, name)?.message;
 
   return (
     <Controller
