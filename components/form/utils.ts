@@ -1,7 +1,6 @@
+import get from 'lodash.get';
 import * as React from 'react';
 import { FieldError } from 'react-hook-form';
-
-import { getValue } from '~w-common/scripts';
 
 interface withErrorReturn {
   /** when true, it will show the red border for the textfield */
@@ -26,7 +25,7 @@ export function withError<T extends Record<string, FieldError>>(
   name: string,
   errors: T
 ): withErrorReturn {
-  const errMsg = getValue(errors, name)?.message || '';
+  const errMsg = get(errors, name)?.message || '';
 
   return {
     error: !!errMsg,
