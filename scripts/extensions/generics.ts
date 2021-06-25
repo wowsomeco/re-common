@@ -53,12 +53,27 @@ export function removeEmpty(
     return true;
   };
 
-  // TODO: define option for defining what to remove based on its type
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([, v]) => (isNullOrUndefined(v) ? false : checkOmits(v)))
-      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v, omits) : v])
-  );
+  return Object.keys(obj).reduce((prevVal, key) => {
+    const value = obj[key];
+    const shouldOmit = isNullOrUndefined(value) || !checkOmits(value);
+
+    if (shouldOmit) return { ...prevVal };
+
+    // handle array
+    if (Array.isArray(value)) {
+      return {
+        ...prevVal,
+        [key]: value.map((arrObj) => removeEmpty(arrObj, omits))
+      };
+    }
+
+    // handle nested object
+    if (value === Object(value)) {
+      return { ...prevVal, [key]: removeEmpty(value, omits) };
+    }
+
+    return { ...prevVal, [key]: value };
+  }, {});
 }
 
 export function isNullOrUndefined(o: any) {

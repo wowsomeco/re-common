@@ -109,6 +109,46 @@ describe('generics tests', () => {
     expect(obj2.i).toBeDefined();
   });
 
+  test('removeEmpty omit 0s in array members', () => {
+    const obj1: Record<string, any> = {
+      values: [
+        {
+          a: undefined,
+          b: 100,
+          c: '',
+          d: 'aaa',
+          e: 0,
+          f: {
+            a: '',
+            c: null,
+            e: 0
+          },
+          g: false,
+          h: -1,
+          i: ''
+        }
+      ]
+    };
+
+    const omits = [(v) => v === 0];
+    const obj2 = removeEmpty(obj1, omits);
+
+    // check the cloned obj2 wont contain the empty properties anymore
+    expect(obj2.values[0].a).toBeUndefined();
+    // empty string must be removed
+    expect(obj2.values[0].c).toBeDefined();
+    // must be removed
+    expect(obj2.values[0].e).toBeUndefined();
+    expect(obj2.values[0].f).toMatchObject({});
+    expect(obj2.values[0].f.a).toBeDefined();
+    expect(obj2.values[0].f.c).toBeUndefined();
+    // must be removed
+    expect(obj2.values[0].f.e).toBeUndefined();
+    expect(obj2.values[0].g).toBeDefined();
+    expect(obj2.values[0].h).toBeDefined();
+    expect(obj2.values[0].i).toBeDefined();
+  });
+
   test('loop tests', () => {
     const arr1: number[] = [1, 4, 7, 10, 15, 3];
     const arr2: number[] = [];
