@@ -1,3 +1,4 @@
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAsync } from 'react-use';
 
@@ -19,26 +20,33 @@ const useFetchOne = <T>(
   execOnMounted: boolean
 ): FetchOneProps<T> => {
   const history = useHistory();
-  const { submit, loading, result } = useFetchJson<T>({
+  const { result, loading, submit } = useFetchJson<T>({
     method: 'GET',
     endpoint
   });
 
+  // to block result from useFetchJson before passed into component
+  const [isCheckStatus, setCheckStatus] = React.useState(false);
+
   // fetch the items from the backend
   const doFetch = async () => {
+    setCheckStatus(true);
     const { status } = await submit();
     if (status === 404) {
       history.push(PAGE_NOT_FOUND);
+    } else {
+      setCheckStatus(false);
     }
   };
+
   // do fetch on mounted if execOnMounted is true OR when the endpoint changes.
   useAsync(async () => {
     if (execOnMounted) await doFetch();
   }, [endpoint]);
 
   return {
-    result,
-    loading,
+    result: isCheckStatus ? undefined : result,
+    loading: isCheckStatus ? true : loading,
     doFetch
   };
 };
