@@ -11,7 +11,36 @@ import { Table } from '~w-common/components/table/table';
 import { Headline } from '~w-common/components/typography';
 import useTableAction from '~w-common/hooks/useTableAction';
 
-import { DataTableProps } from '~w-common/components/table/types';
+export interface TableData<T> {
+  header: string;
+  row: (t: T) => React.ReactNode;
+}
+
+interface ActionCallback<T> {
+  item: T;
+  setDisabled: (flag: boolean) => void;
+}
+
+export interface DataTableProps<T> extends CommonProps {
+  idKey?: string;
+  disableHeadline?: boolean;
+  title?: string;
+  flexWrapHeadline?: boolean;
+  addLabel?: string;
+  items: TableData<T>[];
+  itemPerPage?: number;
+  onRowClick?: (data: T) => void;
+  rightSlot?: React.ReactNode;
+  detailsRoute?: string;
+  data: T[];
+  placeholder?: React.ReactNode;
+  disabled?: boolean;
+  action?: (cb: ActionCallback<T>) => React.ReactNode;
+  loading?: boolean;
+  count?: number;
+  onPageChange?: (page: number) => void;
+  singleColumn?: boolean;
+}
 
 // code from https://stackoverflow.com/a/42761393
 function paginate(array: any[], pageSize: number, pageNumber: number) {
@@ -91,12 +120,12 @@ const LocalTable = <T extends Record<string, any>>(
     onRowClick ? onRowClick(data) : toDetail(data?.[idKey]);
 
   return loading ? (
-    <div className="w-full mt-5">
-      <div className="flex justify-between items-center">
+    <div className='w-full mt-5'>
+      <div className='flex justify-between items-center'>
         <Skeleton height={35} width={100} />
         <Skeleton height={35} width={50} />
       </div>
-      <Skeleton animation="wave" height={70} />
+      <Skeleton animation='wave' height={70} />
       <Skeleton animation={false} />
       <Skeleton />
     </div>
@@ -112,9 +141,9 @@ const LocalTable = <T extends Record<string, any>>(
               rightSlot
             ) : (
               <Btn
-                type="button"
-                variant="contained"
-                color="primary"
+                type='button'
+                variant='contained'
+                color='primary'
                 onClick={toNew}
               >
                 {addLabel}
@@ -125,7 +154,7 @@ const LocalTable = <T extends Record<string, any>>(
           {title}
         </Headline>
       )}
-      <div className="w-full">
+      <div className='w-full'>
         {disabled ? <LinearProgress /> : null}
         <Table
           {...other}
@@ -137,11 +166,11 @@ const LocalTable = <T extends Record<string, any>>(
           header={
             <tr>
               {items.map((item) => (
-                <th key={nanoid()} className="px-2 py-4 md:text-left">
+                <th key={nanoid()} className='px-2 py-4 md:text-left'>
                   {item.header}
                 </th>
               ))}
-              {action ? <th className="px-2 py-4">Action</th> : null}
+              {action ? <th className='px-2 py-4'>Action</th> : null}
             </tr>
           }
           eachRow={(data, i) => (
@@ -152,7 +181,7 @@ const LocalTable = <T extends Record<string, any>>(
               }
               key={i}
               tabIndex={0}
-              className="border-t border-gray-100 hover:bg-gray-50 focus:bg-blue-50 cursor-pointer"
+              className='border-t border-gray-100 hover:bg-gray-50 focus:bg-blue-50 cursor-pointer'
             >
               {items.map((item) => (
                 <Td
@@ -168,11 +197,11 @@ const LocalTable = <T extends Record<string, any>>(
           )}
         />
       </div>
-      <div className="mt-5 flex justify-end">
+      <div className='mt-5 flex justify-end'>
         <Pagination
           count={pageCount}
-          variant="outlined"
-          color="primary"
+          variant='outlined'
+          color='primary'
           page={page}
           onChange={handleChange}
         />
