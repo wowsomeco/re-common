@@ -46,7 +46,7 @@ interface FormFileProps {
   onUpload?: (f: File) => Promise<void>;
   uploading?: boolean;
   onChange?: (f: File) => void;
-  renderLoader: () => React.ReactNode;
+  renderLoader?: () => React.ReactNode;
 }
 
 const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
