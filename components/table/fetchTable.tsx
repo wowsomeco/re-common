@@ -1,185 +1,181 @@
-import { LinearProgress } from '@material-ui/core';
-import Pagination from '@material-ui/core/Pagination';
-import Skeleton from '@material-ui/core/Skeleton';
-import clsx from 'clsx';
-import { nanoid } from 'nanoid';
 import * as React from 'react';
 
-import { CommonProps } from '~w-common/components';
+import { Btn } from '~w-common/components/btn';
+import Filter, { FilterField, FilterSubmit } from '~w-common/components/filter';
+import LocalTable, {
+  DataTableProps
+} from '~w-common/components/table/localTable';
 import { Headline } from '~w-common/components/typography';
-import useFetchList, { FetchListState } from '~w-common/hooks/useFetchList';
+import { useFetchJson } from '~w-common/hooks';
 import useTableAction from '~w-common/hooks/useTableAction';
 
-import { Btn } from '../btn';
-import { Table } from './table';
-
-export interface TableData<T> {
-  header: string;
-  row: (t: T) => React.ReactNode;
-}
-
-export const Td: React.FC<{ dataHeader?: string } & CommonProps> = ({
-  dataHeader,
-  children,
-  className,
-  style
-}) => {
-  return (
-    <td
-      className={clsx(
-        className,
-        'text-gray-500 text-right px-4 py-2 md:text-center'
-      )}
-      style={style}
-      data-header={dataHeader}
-    >
-      {children}
-    </td>
-  );
+// list response with count
+type ListResponseModel<T> = {
+  data: T[];
+  count: number;
 };
 
-export interface ActionCallback<T> {
-  item: T;
-  setDisabled: (flag: boolean) => void;
-  reload: () => void;
+interface QueryURL {
+  limit: number;
+  offset: number;
 }
 
-export interface FetchTableProps<T> extends CommonProps {
-  idKey?: string;
-  title: string;
-  addLabel?: string;
+export interface FetchTableProps<T> extends Omit<DataTableProps<T>, 'data'> {
   endpoint: string;
-  endpointCount: string;
-  /* if supplied, then whenever the row gets clicked
-   * it will be added in between the cur pathname and the id
-   * e.g {pathname}/{detailsRoute}/:id
-   */
-  detailsRoute?: string;
-  placeholder?: React.ReactNode;
-  items: TableData<T>[];
-  itemPerPage?: number;
-  disabled?: boolean;
-  action?: (cb: ActionCallback<T>) => React.ReactNode;
-  onRowClick?: (row: T) => void;
+  endpointCount?: string;
+  filterFields?: FilterField[];
+  renderCustomHeadline?: (onFilter: FilterSubmit) => React.ReactNode;
 }
 
 /**
- * The table that the data gets fetched from the server.
- * only use this for the `online` table.
- * also ensure there is an endpoint to get the count of all the items in the db too (for pagination purpose)
+ * Table with fetch functionality
+ * Support 2 type of endpoint
+ * - endpoint contain { data, count }
+ * - double endpoint: endpoint with data + endpoint with count (dont support filtering count)
  */
-export const FetchTable = <T extends Record<string, any>>(
+const FetchTable = <T extends Record<string, any>>(
   props: FetchTableProps<T>
 ) => {
   const {
-    idKey = 'id',
+    disableHeadline,
     title,
+    flexWrapHeadline = false,
     addLabel = 'Add',
+    rightSlot,
+    detailsRoute,
     endpoint,
     endpointCount,
-    detailsRoute,
     items,
+    filterFields,
     itemPerPage = 5,
-    action,
     onRowClick,
-    ...other
+    renderCustomHeadline,
+    ...otherProps
   } = props;
+  const { toNew } = useTableAction({ detailsRoute });
+  const { result, loading, submit } = useFetchJson<ListResponseModel<T> | T>(
+    { method: 'GET', endpoint },
+    true
+  );
 
-  const [disabled, setDisabled] = React.useState(false);
+  /**
+   * COUNT: get count if endpointCount provided
+   */
+  const [count, setCount] = React.useState<number>();
+  const { submit: fetchCount, loading: countLoading } = useFetchJson<
+    Record<string, number>
+  >({
+    method: 'GET',
+    endpoint: endpointCount || ''
+  });
 
-  const { toDetail, toNew } = useTableAction({ detailsRoute });
+  React.useEffect(() => {
+    (async () => {
+      if (!endpointCount) return;
+      const { data } = await fetchCount();
+      setCount(data?.count);
+    })();
+  }, []);
 
-  const {
-    result = [],
-    loading,
-    count,
-    page,
-    setPage,
-    doFetch: reload
-  } = useFetchList<T>(endpoint, endpointCount, new FetchListState(itemPerPage));
+  /**
+   * QUERY: filter & pagination
+   */
+  const [queryURL, setQueryURL] = React.useState<QueryURL>({
+    limit: itemPerPage,
+    offset: 0
+  });
+  const [filterQuery, setFilterQuery] = React.useState<string>('');
 
-  const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+  React.useEffect(() => {
+    (async () => {
+      // convert queryURL object into query string
+      const query =
+        '?' +
+        filterQuery +
+        '&' +
+        Object.keys(queryURL)
+          .map((queryName) => `${queryName}=${queryURL[queryName]}`)
+          .join('&');
+
+      await submit(undefined, query);
+    })();
+  }, [queryURL, filterQuery]);
+
+  const onFilterBase: FilterSubmit = async (filterQuery, onClose) => {
+    setFilterQuery(filterQuery);
+    onClose();
   };
 
-  const handleRowClick = (model: T) =>
-    onRowClick ? onRowClick(model) : toDetail(model?.[idKey]);
+  // Prevent rerender so can keep filter form value
+  const onFilter = React.useCallback(onFilterBase, []);
 
-  return loading ? (
-    <div className='w-full mt-5'>
-      <div className='flex justify-between items-center'>
-        <Skeleton height={35} width={100} />
-        <Skeleton height={35} width={50} />
-      </div>
-      <Skeleton animation='wave' height={70} />
-      <Skeleton animation={false} />
-      <Skeleton />
-    </div>
-  ) : (
-    <>
+  const onPageChange = (page: number) => {
+    setQueryURL((prevVal) => ({
+      ...prevVal,
+      offset: (page - 1) * prevVal.limit
+    }));
+  };
+
+  const renderHeadline = (): React.ReactNode => {
+    // Headline Disabled
+    if (disableHeadline) return null;
+
+    // Custom Headline
+    if (renderCustomHeadline) return renderCustomHeadline(onFilter);
+
+    // Default Headline
+    return (
       <Headline
+        textClassName={flexWrapHeadline ? 'text-gray-500 flex-wrap' : undefined}
         rightSlot={
-          <Btn
-            type='button'
-            variant='contained'
-            color='primary'
-            loading={loading}
-            onClick={toNew}
-          >
-            {addLabel}
-          </Btn>
+          rightSlot ? (
+            rightSlot
+          ) : (
+            <Btn
+              type='button'
+              variant='contained'
+              color='primary'
+              onClick={toNew}
+            >
+              {addLabel}
+            </Btn>
+          )
         }
       >
-        {title}
+        <span className='flex items-center'>
+          {title}{' '}
+          {!!filterFields && !count && (
+            <Filter
+              className='ml-2'
+              onSubmit={onFilter}
+              fields={filterFields}
+            ></Filter>
+          )}
+        </span>
       </Headline>
-      <div className='w-full'>
-        {disabled ? <LinearProgress /> : null}
-        <Table
-          {...other}
-          className={clsx(
-            'bg-white shadow rounded w-full',
-            disabled && 'pointer-events-none'
-          )}
-          data={result}
-          header={
-            <tr>
-              {items.map((item) => (
-                <th key={nanoid()} className='px-2 py-4'>
-                  {item.header}
-                </th>
-              ))}
-              {action ? <th className='px-2 py-4'>Action</th> : null}
-            </tr>
-          }
-          eachRow={(data, i) => (
-            <tr
-              onClick={() => handleRowClick(data)}
-              onKeyPress={(e) =>
-                e.key === 'Enter' ? handleRowClick(data) : null
-              }
-              key={i}
-              tabIndex={0}
-              className='border-t border-gray-100 hover:bg-gray-50 focus:bg-blue-50 cursor-pointer'
-            >
-              {items.map((item) => (
-                <Td key={nanoid()} dataHeader={item.header}>
-                  {item.row(data)}
-                </Td>
-              ))}
-              {action?.({ reload, setDisabled, item: data })}
-            </tr>
-          )}
-        />
-      </div>
-      <div className='mt-5 flex justify-end'>
-        <Pagination
-          count={count}
-          variant='outlined'
-          color='primary'
-          page={page}
-          onChange={handleChange}
-        />
-      </div>
+    );
+  };
+
+  const data = count ? result : result?.data;
+  return (
+    <>
+      {renderHeadline()}
+      <LocalTable<T>
+        disableHeadline={true}
+        data={data || []}
+        title={title}
+        itemPerPage={itemPerPage}
+        items={items}
+        onRowClick={onRowClick}
+        loading={loading || countLoading}
+        rightSlot={rightSlot}
+        onPageChange={onPageChange}
+        count={endpointCount ? count : result?.count}
+        detailsRoute={detailsRoute}
+        {...otherProps}
+      />
     </>
   );
 };
+
+export default FetchTable;
