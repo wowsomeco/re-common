@@ -32,21 +32,21 @@ const Filter: React.FC<FilterProps> = ({ className, onSubmit, fields }) => {
 
   return (
     <FormProvider {...methods}>
-      <Tooltip title="Filter" arrow>
+      <Tooltip title='Filter' arrow>
         <IconButton
-          color="primary"
+          color='primary'
           className={className}
           onClick={() => setOpen(true)}
         >
-          <FiFilter size="24" color="inherit" />
+          <FiFilter size='24' color='inherit' />
         </IconButton>
       </Tooltip>
 
-      <Drawer anchor="right" open={open} onClose={onClose}>
+      <Drawer anchor='right' open={open} onClose={onClose}>
         <div style={{ width: 320 }}>
-          <div className="flex justify-end p-2">
-            <IconButton color="primary" onClick={onClose}>
-              <FiX size="24" />
+          <div className='flex justify-end p-2'>
+            <IconButton color='primary' onClick={onClose}>
+              <FiX size='24' />
             </IconButton>
           </div>
 
@@ -58,21 +58,21 @@ const Filter: React.FC<FilterProps> = ({ className, onSubmit, fields }) => {
 
               onSubmit(filterQuery, onClose);
             })}
-            className="p-8 pt-3 h-screen overflow-auto"
+            className='p-8 pt-3 h-screen overflow-auto'
           >
-            <p className="font-bold text-lg uppercase mb-2">Filter</p>
+            <p className='font-bold text-lg uppercase mb-2'>Filter</p>
             {fields.map((field, i) => {
               // Note: don't use uuid for key, it will trigger rerender
               // & erase form data on submit & on close drawer
               return (
                 <React.Fragment key={`filter-field-${i}`}>
                   {field(methods)}
-                  <div className="mb-2 w-full"></div>
+                  <div className='mb-2 w-full'></div>
                 </React.Fragment>
               );
             })}
-            <div className="flex justify-end sticky bottom-0 right-0 py-5">
-              <Btn type="submit" variant="contained" color="primary">
+            <div className='flex justify-end sticky bottom-0 right-0 py-5'>
+              <Btn type='submit' variant='contained' color='primary'>
                 Submit
               </Btn>
             </div>
