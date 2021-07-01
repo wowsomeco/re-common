@@ -15,7 +15,7 @@ import { FiChevronLeft, FiChevronRight, FiMenu } from 'react-icons/fi';
 
 import { useAppProvider } from '~w-common/contexts/appContext';
 
-const useStyles = (drawerWidth: number = 240) =>
+const useStyles = (drawerWidth: number = 240, isMenuBar: boolean = false) =>
   makeStyles((theme: Theme) =>
     createStyles({
       root: {
@@ -24,13 +24,13 @@ const useStyles = (drawerWidth: number = 240) =>
       },
       drawer: {
         [theme.breakpoints.up('sm')]: {
-          width: drawerWidth,
+          width: isMenuBar ? 0 : drawerWidth,
           flexShrink: 0
         }
       },
       appBar: {
         [theme.breakpoints.up('sm')]: {
-          width: `calc(100% - ${drawerWidth}px)`,
+          width: isMenuBar ? '100%' : `calc(100% - ${drawerWidth}px)`,
           marginLeft: drawerWidth
         }
       },
@@ -63,12 +63,14 @@ const useStyles = (drawerWidth: number = 240) =>
   );
 
 interface LayoutProps {
+  menuBar?: React.ReactNode;
   sideBar: React.ReactNode;
   sideBarWidth?: number;
   headerSlot?: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
+  menuBar,
   sideBar,
   sideBarWidth = 240,
   headerSlot,
@@ -76,7 +78,7 @@ export const Layout: React.FC<LayoutProps> = ({
 }) => {
   const { appName } = useAppProvider();
 
-  const classes = useStyles(sideBarWidth)();
+  const classes = useStyles(sideBarWidth, !!menuBar)();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -123,7 +125,15 @@ export const Layout: React.FC<LayoutProps> = ({
           >
             <FiMenu />
           </IconButton>
-          <p className='text-blue-400 font-bold'>{appName}</p>
+          <div className='flex justify-between items-center'>
+            <p className='text-blue-400 font-bold sm:mr-3'>{appName}</p>
+            {menuBar && (
+              <Hidden smDown implementation='css'>
+                {menuBar}
+              </Hidden>
+            )}
+          </div>
+
           {headerSlot}
         </Toolbar>
       </AppBar>
@@ -146,17 +156,19 @@ export const Layout: React.FC<LayoutProps> = ({
             {drawer(true)}
           </Drawer>
         </Hidden>
-        <Hidden smDown implementation='css'>
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper
-            }}
-            variant='permanent'
-            open
-          >
-            {drawer(false)}
-          </Drawer>
-        </Hidden>
+        {!menuBar && (
+          <Hidden smDown implementation='css'>
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper
+              }}
+              variant='permanent'
+              open
+            >
+              {drawer(false)}
+            </Drawer>
+          </Hidden>
+        )}
       </nav>
       <main className={clsx(classes.content, 'bg-gray-50 overflow-y-scroll')}>
         {children}
