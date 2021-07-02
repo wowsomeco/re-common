@@ -5,20 +5,19 @@ import CircularProgress, {
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
-import LocalFormFile from '~w-common/components/form/localFormFile';
+import LocalFormFile, {
+  LocalFormFileProps
+} from '~w-common/components/form/localFormFile';
 import {
   FileModel,
   UploadMethod,
   useFileUpload
 } from '~w-common/hooks/useFileUpload';
 
-interface FormFileProps {
-  label: string;
+interface FormFileProps extends LocalFormFileProps {
   endpoint: string;
-  accept?: string | string[];
   method?: UploadMethod;
-  defaultValue: FileModel | undefined;
-  onUploaded: (f: FileModel) => void;
+  onUploaded?: (f: FileModel) => void;
 }
 
 const CircularProgressWithLabel: React.FC<
@@ -48,17 +47,25 @@ const CircularProgressWithLabel: React.FC<
 };
 
 const FormFile: React.FC<FormFileProps> = ({
-  label,
   endpoint,
+  method = 'POST',
+  onUploaded,
+  label,
   accept,
   defaultValue,
-  onUploaded,
-  method = 'POST'
+  renderLoader,
+  onUpload,
+  uploading: uploadingProp,
+  ...props
 }) => {
-  const { progress, uploading, upload } = useFileUpload(endpoint, method);
+  const {
+    progress,
+    uploading = uploadingProp,
+    upload
+  } = useFileUpload(endpoint, method);
   const doUpload = async (file: File) => {
     const f = await upload(file);
-    onUploaded(f);
+    onUploaded?.(f);
   };
 
   return (
@@ -66,9 +73,14 @@ const FormFile: React.FC<FormFileProps> = ({
       label={label}
       accept={accept}
       defaultValue={defaultValue}
-      onUpload={doUpload}
+      onUpload={onUpload ? onUpload : doUpload}
       uploading={uploading}
-      renderLoader={() => <CircularProgressWithLabel value={progress} />}
+      renderLoader={
+        renderLoader
+          ? renderLoader
+          : () => <CircularProgressWithLabel value={progress} />
+      }
+      {...props}
     />
   );
 };
