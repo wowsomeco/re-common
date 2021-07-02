@@ -4,6 +4,7 @@ export interface FormFieldProps {
   name: string;
   rules?: RegisterOptions;
   defaultValue?: any | null;
+  disabled?: boolean;
   // for rare use case like working with react-hook-form "watch" where
   // the "watch state" will return defaultValue if the field value is falsy
   // this will prevent react useEffect running if it depend on "watch state"

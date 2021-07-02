@@ -40,6 +40,7 @@ const FormInput: React.FC<FormInputProps> = ({
   defaultValue = null,
   readOnly = false,
   rules,
+  disabled,
   onChange
 }) => {
   const { register, errors } = useFormContext();
@@ -51,6 +52,7 @@ const FormInput: React.FC<FormInputProps> = ({
       inputRef={register(rules)}
       type={type}
       label={label}
+      disabled={disabled}
       fullWidth={fullWidth}
       multiline={multiline}
       rows={rows}

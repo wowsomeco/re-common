@@ -39,12 +39,13 @@ const rejectStyle: React.CSSProperties = {
   borderColor: '#ff1744'
 };
 
-interface FormFileProps {
+export interface LocalFormFileProps {
   label: string;
   accept?: string | string[];
   defaultValue?: FileModel;
-  onUpload?: (f: File) => Promise<void>;
+  disabled?: boolean;
   uploading?: boolean;
+  onUpload?: (f: File) => Promise<void>;
   onChange?: (f: File) => void;
   renderLoader?: () => React.ReactNode;
 }
@@ -90,12 +91,13 @@ const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
   );
 };
 
-const LocalFormFile: React.FC<FormFileProps> = ({
+const LocalFormFile: React.FC<LocalFormFileProps> = ({
   label,
   accept,
   defaultValue,
-  onUpload,
+  disabled = false,
   uploading = false,
+  onUpload,
   onChange,
   renderLoader
 }) => {
@@ -110,7 +112,7 @@ const LocalFormFile: React.FC<FormFileProps> = ({
   } = useDropzone({
     accept,
     maxFiles: 1,
-    disabled: uploading,
+    disabled: uploading || disabled,
     maxSize: 31457280 // 30 mb
   });
 
@@ -143,7 +145,7 @@ const LocalFormFile: React.FC<FormFileProps> = ({
   const uploadErr = !fileRejections?.length
     ? undefined
     : capitalize(fileRejections?.[0].errors?.[0].code, '-');
-  const canUpload = acceptedFiles.length > 0 && !uploadErr;
+  const canUpload = !disabled && acceptedFiles.length > 0 && !uploadErr;
 
   return (
     <div className='w-full'>
@@ -170,10 +172,16 @@ const LocalFormFile: React.FC<FormFileProps> = ({
           </div>
         ) : (
           <>
-            <input {...getInputProps()} />
-            <p className='cursor-pointer hover:text-blue-500'>
-              Drag and drop the file here, or click to upload
-            </p>
+            {disabled ? (
+              <div>Upload disabled</div>
+            ) : (
+              <>
+                <input {...getInputProps()} />
+                <p className='cursor-pointer hover:text-blue-500'>
+                  Drag and drop the file here, or click to upload
+                </p>
+              </>
+            )}
           </>
         )}
       </div>
