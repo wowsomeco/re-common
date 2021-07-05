@@ -6,6 +6,7 @@ import { FormProvider, useForm, UseFormMethods } from 'react-hook-form';
 import { FiFilter, FiX } from 'react-icons/fi';
 
 import { Btn } from '~w-common/components/btn';
+import { removeEmpty } from '~w-common/scripts';
 
 export type FilterField = (methods: UseFormMethods) => React.ReactNode;
 
@@ -52,7 +53,8 @@ const Filter: React.FC<FilterProps> = ({ className, onSubmit, fields }) => {
 
           <form
             onSubmit={handleSubmit((formVal) => {
-              const filterQuery = Object.keys(formVal)
+              const cleanValue = removeEmpty(formVal, [(v) => !v]);
+              const filterQuery = Object.keys(cleanValue)
                 .map((queryName) => `${queryName}=${formVal[queryName]}`)
                 .join('&');
 
