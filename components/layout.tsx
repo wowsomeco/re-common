@@ -23,25 +23,25 @@ const useStyles = (drawerWidth: number = 240, isMenuBar: boolean = false) =>
         height: '100vh'
       },
       drawer: {
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up(isMenuBar ? 'md' : 'sm')]: {
           width: isMenuBar ? 0 : drawerWidth,
           flexShrink: 0
         }
       },
       appBar: {
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up(isMenuBar ? 'md' : 'sm')]: {
           width: isMenuBar ? '100%' : `calc(100% - ${drawerWidth}px)`,
           marginLeft: drawerWidth
         }
       },
       menuButton: {
         marginRight: theme.spacing(2),
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up(isMenuBar ? 'md' : 'sm')]: {
           display: 'none'
         }
       },
       closeButton: {
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up(isMenuBar ? 'md' : 'sm')]: {
           display: 'none'
         }
       },
@@ -128,7 +128,7 @@ export const Layout: React.FC<LayoutProps> = ({
           <div className='flex justify-between items-center'>
             <p className='text-blue-400 font-bold sm:mr-3'>{appName}</p>
             {menuBar && (
-              <Hidden smDown implementation='css'>
+              <Hidden smDown={!menuBar} mdDown={!!menuBar} implementation='css'>
                 {menuBar}
               </Hidden>
             )}
@@ -157,7 +157,7 @@ export const Layout: React.FC<LayoutProps> = ({
           </Drawer>
         </Hidden>
         {!menuBar && (
-          <Hidden smDown implementation='css'>
+          <Hidden smDown={!menuBar} mdDown={!!menuBar} implementation='css'>
             <Drawer
               classes={{
                 paper: classes.drawerPaper
