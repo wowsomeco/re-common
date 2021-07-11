@@ -89,14 +89,13 @@ const FetchTable = <T extends Record<string, any>>(
   React.useEffect(() => {
     (async () => {
       // convert queryURL object into query string
-      const query =
-        '?' +
-        filterQuery +
-        '&' +
-        Object.keys(queryURL)
-          .map((queryName) => `${queryName}=${queryURL[queryName]}`)
-          .join('&');
+      const queryStart = endpoint.includes('?') ? '&' : '?';
+      const limitOffset = Object.keys(queryURL)
+        .map((queryName) => `${queryName}=${queryURL[queryName]}`)
+        .join('&');
+      const filter = filterQuery ? `&${filterQuery}` : '';
 
+      const query = queryStart + limitOffset + filter;
       await submit(undefined, query);
     })();
   }, [queryURL, filterQuery]);
