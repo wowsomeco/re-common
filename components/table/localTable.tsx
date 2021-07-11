@@ -16,7 +16,7 @@ export interface TableData<T> {
   row: (t: T) => React.ReactNode;
 }
 
-interface ActionCallback<T> {
+export interface ActionCallback<T> {
   item: T;
   setDisabled: (flag: boolean) => void;
 }
