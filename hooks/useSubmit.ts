@@ -55,7 +55,7 @@ const useSubmit = <T>(options: SubmitOptions<T>): OnSubmitProps<T> => {
       whitelist ? removeEmpty(model, omit) : model
     );
 
-    const r = await submit(payload);
+    const r = await submit({ body: payload });
     responseNotif(notif, r, isNew);
     onSubmitted?.(r);
   };

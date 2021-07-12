@@ -96,7 +96,7 @@ const FetchTable = <T extends Record<string, any>>(
       const filter = filterQuery ? `&${filterQuery}` : '';
 
       const query = queryStart + limitOffset + filter;
-      await submit(undefined, query);
+      await submit({ query });
     })();
   }, [queryURL, filterQuery]);
 
