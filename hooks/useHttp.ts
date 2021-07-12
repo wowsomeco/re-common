@@ -18,11 +18,13 @@ export type HttpResponseBodyMethod =
   | 'json'
   | 'text';
 
-export type SubmitCallback<T> = (
-  body?: any | null,
+export type SubmitOptions = {
+  body?: BodyInit | null;
   /** additional query that gets concatenated with the provided endpoint in [[useStatelessFetch]] on submit */
-  query?: any | undefined
-) => Promise<Resp<T>>;
+  query?: string | undefined;
+};
+
+export type SubmitCallback<T> = (opts?: SubmitOptions) => Promise<Resp<T>>;
 
 /** The response from the rest API */
 export interface Resp<T> {
@@ -100,10 +102,8 @@ export const useStatelessFetch = <T>(
   // check first whether tenantKey is defined
   if (tenantKey) headers[tenantKey] = subDomain();
 
-  const submit = async (
-    body?: BodyInit | null,
-    query: string | undefined = undefined
-  ): Promise<Resp<T>> => {
+  const submit = async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
+    const { body, query } = opts;
     let theBody = body;
     // TODO: might need to test it for different use cases later
     // check if the content type is json
@@ -171,13 +171,10 @@ export const useFetch = <T>(
 
   const isMounted = useMountedState();
 
-  const submit = async (
-    body?: any | null,
-    query: string | undefined = undefined
-  ): Promise<Resp<T>> => {
+  const submit = async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
     if (!state.loading) setState({ loading: true, result: undefined });
 
-    const { status, ok, data, error } = await doFetch(body, query);
+    const { status, ok, data, error } = await doFetch(opts);
 
     // dont change state when no longer mounted
     if (isMounted()) {

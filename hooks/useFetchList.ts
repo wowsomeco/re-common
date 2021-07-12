@@ -88,7 +88,7 @@ const useFetchList = <T>(
 
   // fetch the items from the backend
   const doFetch = async () => {
-    await submit(undefined, state.query());
+    await submit({ query: state.query() });
   };
 
   // effect that gets called on mounted OR
