@@ -19,7 +19,7 @@ export type HttpResponseBodyMethod =
   | 'text';
 
 export type SubmitOptions = {
-  body?: BodyInit | null;
+  body?: any | null;
   /** additional query that gets concatenated with the provided endpoint in [[useStatelessFetch]] on submit */
   query?: string | undefined;
 };
