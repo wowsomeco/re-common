@@ -1,4 +1,5 @@
 import { Autocomplete, CircularProgress, TextField } from '@material-ui/core';
+import get from 'lodash.get';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { useMountedState } from 'react-use';
@@ -14,6 +15,7 @@ export interface SelectEnumProps extends Omit<FormFieldProps, 'onChange'> {
   disabled?: boolean;
   optionId?: string;
   optionName?: string;
+  getOptionLabel?: (option?: EnumModel) => string;
   onChange?: (v: string | null) => void;
 }
 
@@ -30,6 +32,10 @@ const DummyAutoComplete: React.FC<{ label: string }> = ({ label }) => {
 };
 
 type EnumModel = Record<string, any>;
+interface EnumWithCount {
+  data: EnumModel[];
+  count: number;
+}
 
 export const FormSelectEnum: React.FC<SelectEnumProps> = ({
   name,
@@ -39,9 +45,10 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
   disabled,
   optionId = 'id',
   optionName = 'name',
+  getOptionLabel,
   onChange
 }) => {
-  const { submit } = useStatelessFetchJson<EnumModel[]>({
+  const { submit } = useStatelessFetchJson<EnumWithCount | EnumModel[]>({
     method: 'GET',
     endpoint: endpoint || ''
   });
@@ -50,8 +57,14 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
   const [fetching, setFetching] = React.useState(true);
   const loading = fetching;
 
-  const findNameById = (id: string) =>
-    result.find((x) => x[optionId] === id)?.[optionName] || '';
+  const findNameById = (id: string) => {
+    const find = result.find((x) => get(x, optionId) === id);
+
+    // support custom name labeling, eg; combining multiple field value
+    if (getOptionLabel) return getOptionLabel(find);
+
+    return find ? get(find, optionName) : '';
+  };
 
   const { control, errors } = useFormContext();
 
@@ -66,7 +79,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
         const { data } = await submit();
 
         if (isMounted()) {
-          setResult(data || []);
+          setResult((data as EnumWithCount)?.data || data || []);
           setFetching(false);
         }
       } else {
@@ -91,7 +104,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
           fullWidth
           loading={loading}
           disabled={disabled}
-          options={result.map((x) => x[optionId])}
+          options={result.map((x) => get(x, optionId))}
           getOptionLabel={findNameById}
           renderInput={(params) => (
             <TextField
@@ -114,8 +127,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
           {...props}
           onChange={(_, data) => {
             props.onChange(data);
-
-            onChange && onChange(data);
+            onChange?.(data);
           }}
         />
       )}
