@@ -98,7 +98,7 @@ const FetchTable = <T extends Record<string, any>>(
       const query = queryStart + limitOffset + filter;
       await submit({ query });
     })();
-  }, [queryURL, filterQuery]);
+  }, [queryURL, filterQuery, endpoint]);
 
   const onFilterBase: FilterSubmit = async (filterQuery, onClose) => {
     setFilterQuery(filterQuery);
