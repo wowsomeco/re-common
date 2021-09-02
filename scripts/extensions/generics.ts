@@ -96,7 +96,7 @@ export const formatBytes = (bytes: number, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-export const saveAs = (file: FileModel): Promise<void> => {
+export const saveAs = (file: FileModel, filename?: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', file.url, true);
@@ -104,7 +104,10 @@ export const saveAs = (file: FileModel): Promise<void> => {
     xhr.onload = () => {
       const f = new Blob([xhr.response], { type: file.type });
       const a = document.createElement('a');
-      a.setAttribute('download', lastSplit(file.key, '/') || 'file');
+      a.setAttribute(
+        'download',
+        filename || lastSplit(file.key, '/') || 'file'
+      );
       a.href = window.URL.createObjectURL(f);
       a.style.display = 'none';
       document.body.appendChild(a);
