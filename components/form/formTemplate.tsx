@@ -22,6 +22,8 @@ interface FormTemplateProps {
   extraPayload?: (isNew: boolean) => Record<string, any> | undefined;
   /** The route that will be redirected to if the [[getEndpoint]] returns 404 */
   notFoundRoute?: string;
+  /** Hide update button if disabled */
+  disabled?: boolean;
 }
 
 /**
@@ -36,7 +38,8 @@ const FormTemplate = <T extends Record<string, any>>(
     getEndpoint,
     fields,
     extraPayload,
-    notFoundRoute = '/not-found'
+    notFoundRoute = '/not-found',
+    disabled = false
   } = props;
   const isNew = id === undefined;
   const apiUrl = `${submitEndpoint}${isNew ? '' : `/${id}`}`;
@@ -85,14 +88,16 @@ const FormTemplate = <T extends Record<string, any>>(
         <form onSubmit={handleSubmit((v) => doSubmit(v as T))}>
           {fields(isNew, loading)}
           <div className='flex justify-end sticky bottom-0 right-0 py-5'>
-            <Btn
-              type='submit'
-              variant='contained'
-              color='primary'
-              loading={loading}
-            >
-              {isNew ? 'Submit' : 'Update'}
-            </Btn>
+            {!disabled && (
+              <Btn
+                type='submit'
+                variant='contained'
+                color='primary'
+                loading={loading}
+              >
+                {isNew ? 'Submit' : 'Update'}
+              </Btn>
+            )}
           </div>
         </form>
       )}

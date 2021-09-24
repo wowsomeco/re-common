@@ -50,7 +50,7 @@ export interface LocalFormFileProps {
   renderLoader?: () => React.ReactNode;
 }
 
-const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
+export const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
   const [downloading, setDownloading] = React.useState(false);
 
   const download = async () => {
@@ -72,7 +72,7 @@ const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
   );
 };
 
-const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
+export const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
   const [openPreview, setOpenPreview] = React.useState(false);
 
   return (
@@ -88,6 +88,29 @@ const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
         setOpen={(f) => setOpenPreview(f)}
       />
     </>
+  );
+};
+
+export const ViewFormFile: React.FC<{
+  label: string;
+  file?: FileModel;
+  notFound?: React.ReactNode;
+}> = ({ label, file, notFound = null }) => {
+  return (
+    <div
+      style={{ minHeight: '50px' }}
+      className='flex items-center justify-between mb-2'
+    >
+      <p className='text-gray-500'>{label}</p>
+      {file ? (
+        <div className='flex'>
+          <Downloader file={file} />
+          <Previewer file={file} />
+        </div>
+      ) : (
+        notFound
+      )}
+    </div>
   );
 };
 
@@ -149,18 +172,7 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
 
   return (
     <div className='w-full'>
-      <div
-        style={{ minHeight: '50px' }}
-        className='flex items-center justify-between mb-2'
-      >
-        <p className='text-gray-500'>{label}</p>
-        {defaultValue ? (
-          <div className='flex'>
-            <Downloader file={defaultValue} />
-            <Previewer file={defaultValue} />
-          </div>
-        ) : null}
-      </div>
+      <ViewFormFile label={label} file={defaultValue} />
       <div {...getRootProps({ style })}>
         {uploading ? (
           <div className={TW_CENTER}>
