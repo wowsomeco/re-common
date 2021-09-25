@@ -20,10 +20,13 @@ const useFetchOne = <T>(
   execOnMounted: boolean
 ): FetchOneProps<T> => {
   const history = useHistory();
-  const { result, loading, submit } = useFetchJson<T>({
-    method: 'GET',
-    endpoint
-  });
+  const { result, loading, submit } = useFetchJson<T>(
+    {
+      method: 'GET',
+      endpoint
+    },
+    execOnMounted
+  );
 
   // to block result from useFetchJson before passed into component
   const [isCheckStatus, setCheckStatus] = React.useState(false);
