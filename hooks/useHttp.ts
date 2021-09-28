@@ -66,6 +66,8 @@ interface FetchOptionsBase {
   method: HttpMethod;
   /** the rest api endpoint without the prefix forward slash (/) */
   endpoint: string;
+  /** callbacks by status code */
+  statusCallbacks?: Record<number, () => void | Promise<void>>;
 }
 
 interface FetchOptions extends FetchOptionsBase {
@@ -90,7 +92,10 @@ export const useStatelessFetch = <T>(
     method,
     endpoint,
     contentType,
-    expectedResponseType = 'json'
+    expectedResponseType = 'json',
+    statusCallbacks = {
+      401: () => window.location.replace('login')
+    }
   } = options;
 
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
@@ -125,6 +130,7 @@ export const useStatelessFetch = <T>(
       apiUrl(endpoint + (query ?? '')),
       req
     );
+
     // TODO: partially done, e.g. need to handle different http status code from the backend...
     // e.g. callbacks when unauthorized, etc...
     const status = response.status;
@@ -133,13 +139,20 @@ export const useStatelessFetch = <T>(
     let data: any;
     let dataTypeError: any;
 
-    try {
-      data = await response[expectedResponseType]();
-    } catch (err) {
-      dataTypeError = err;
+    // if status ok process data
+    if (ok) {
+      try {
+        data = await response[expectedResponseType]();
+      } catch (err) {
+        dataTypeError = err;
+      }
+
+      return { status, ok, data, error: data?.error || dataTypeError };
     }
 
-    return { status, ok, data, error: data?.error || dataTypeError };
+    // if status not ok do something based on status
+    statusCallbacks?.[status]?.();
+    return { status, ok, data, error: response.statusText };
   };
 
   return { submit };
