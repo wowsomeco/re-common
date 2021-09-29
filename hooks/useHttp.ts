@@ -94,7 +94,10 @@ export const useStatelessFetch = <T>(
     contentType,
     expectedResponseType = 'json',
     statusCallbacks = {
-      401: () => window.location.replace('login')
+      401: () =>
+        window.location.replace(
+          `${window.location.protocol}//${window.location.host}/login`
+        )
     }
   } = options;
 
