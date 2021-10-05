@@ -149,10 +149,13 @@ export const FormSelectEnumWithLainnya: React.FC<SelectEnumLainnyaProps> = ({
 }) => {
   const { control, setValue } = useFormContext();
   const watchValue = useWatch({ control, name: props.name });
-  // whenever it's not `lainnya`, set lainnyaId to empty string
-  if (watchValue !== 'lainnya') {
-    setValue(lainnyaId, '');
-  }
+
+  React.useEffect(() => {
+    // whenever it's not `lainnya`, set lainnyaId to empty string
+    if (watchValue !== 'lainnya' && watchValue !== '') {
+      setValue(lainnyaId, '');
+    }
+  }, [watchValue]);
 
   return (
     <>
