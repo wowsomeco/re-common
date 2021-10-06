@@ -10,7 +10,7 @@ import type { FormInputProps } from '~w-common/components/form/formInput';
 
 import { withError } from './utils';
 
-interface MaskedInputProps
+export interface MaskedInputProps
   extends Omit<FormInputProps, 'defaultValue' | 'onChange'>,
     Omit<
       NumberFormatProps,
