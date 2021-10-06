@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAsync } from 'react-use';
+import { useAsync, useMountedState } from 'react-use';
 
 import { PAGE_NOT_FOUND } from '~app/scripts/constants';
 import { useFetchJson } from '~w-common/hooks';
@@ -31,14 +31,19 @@ const useFetchOne = <T>(
   // to block result from useFetchJson before passed into component
   const [isCheckStatus, setCheckStatus] = React.useState(false);
 
+  const isMounted = useMountedState();
+
   // fetch the items from the backend
   const doFetch = async () => {
     setCheckStatus(true);
     const { status } = await submit();
-    if (status === 404) {
-      history.push(PAGE_NOT_FOUND);
-    } else {
-      setCheckStatus(false);
+
+    if (isMounted()) {
+      if (status === 404) {
+        history.push(PAGE_NOT_FOUND);
+      } else {
+        setCheckStatus(false);
+      }
     }
   };
 
