@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMountedState } from 'react-use';
 
 import { Btn } from '~w-common/components/btn';
 import Filter, { FilterField, FilterSubmit } from '~w-common/components/filter';
@@ -58,6 +59,8 @@ const FetchTable = <T extends Record<string, any>>(
     true
   );
 
+  const isMounted = useMountedState();
+
   /**
    * COUNT: get count if endpointCount provided
    */
@@ -73,7 +76,7 @@ const FetchTable = <T extends Record<string, any>>(
     (async () => {
       if (!endpointCount) return;
       const { data } = await fetchCount();
-      setCount(data?.count);
+      if (isMounted()) setCount(data?.count);
     })();
   }, []);
 
