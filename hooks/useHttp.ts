@@ -61,7 +61,7 @@ type FetchState<T> = {
   result?: T | undefined;
 };
 
-interface FetchOptionsBase {
+export interface FetchOptionsBase {
   /** the Http Method (GET,POST,PUT,DELETE) */
   method: HttpMethod;
   /** the rest api endpoint without the prefix forward slash (/) */
@@ -70,7 +70,7 @@ interface FetchOptionsBase {
   statusCallbacks?: Record<number, () => void | Promise<void>>;
 }
 
-interface FetchOptions extends FetchOptionsBase {
+export interface FetchOptions extends FetchOptionsBase {
   contentType?: HttpContentType;
   expectedResponseType?: HttpResponseBodyMethod;
 }

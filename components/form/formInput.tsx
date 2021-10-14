@@ -75,7 +75,7 @@ const FormInput: React.FC<FormInputProps> = ({
   );
 };
 
-interface FormInputNumericProps
+export interface FormInputNumericProps
   extends Omit<FormInputProps, 'type' | 'inputMode' | 'rules'> {
   rules: Omit<RegisterOptions, 'valueAsDate' | 'valueAsNumber' | 'setValueAs'>;
 }
@@ -97,7 +97,8 @@ export const FormInputNumber: React.FC<FormInputNumericProps> = ({
   );
 };
 
-interface FormInputNumProps extends Omit<FormInputNumericProps, 'step'> {}
+export interface FormInputNumProps
+  extends Omit<FormInputNumericProps, 'step'> {}
 
 export const FormInputInt: React.FC<FormInputNumProps> = (props) => {
   return <FormInputNumber step='1' {...props} />;

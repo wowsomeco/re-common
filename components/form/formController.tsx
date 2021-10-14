@@ -8,11 +8,11 @@ import {
   useFormContext
 } from 'react-hook-form';
 
-interface RenderProps extends ControllerRenderProps {
+export interface RenderProps extends ControllerRenderProps {
   errorMessage?: string;
 }
 
-interface FormControllerProps extends UseControllerOptions {
+export interface FormControllerProps extends UseControllerOptions {
   render: (props: RenderProps, state?: InputState) => React.ReactElement;
 }
 

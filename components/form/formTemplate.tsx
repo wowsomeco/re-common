@@ -9,7 +9,7 @@ import { useStatelessFetchJson } from '~w-common/hooks';
 import useReloadForm from '~w-common/hooks/useReloadForm';
 import useSubmit from '~w-common/hooks/useSubmit';
 
-interface FormTemplateProps {
+export interface FormTemplateProps {
   /** undefined means it's anew or an update if otherwise  */
   id?: number;
   /** Insert / Update endpoint */

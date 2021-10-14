@@ -6,7 +6,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from 'react';
 
-interface ScrollDialogProps {
+export interface ScrollDialogProps {
   openDialog?: boolean;
   onClose?: () => void;
   renderButton?: (

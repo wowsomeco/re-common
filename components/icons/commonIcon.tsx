@@ -16,7 +16,7 @@ const icons: Record<IconName, (props: IconBaseProps) => JSX.Element> = {
   search: (p) => <FiSearch {...p} />
 };
 
-interface CommonIconProps extends IconBaseProps {
+export interface CommonIconProps extends IconBaseProps {
   name: IconName;
 }
 

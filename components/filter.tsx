@@ -20,7 +20,7 @@ export type FilterSubmit = (
   onClose: () => void
 ) => Promise<void>;
 
-interface FilterProps {
+export interface FilterProps {
   className?: string;
   onSubmit: FilterSubmit;
   fields: FilterField[];

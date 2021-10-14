@@ -2,7 +2,7 @@ import get from 'lodash.get';
 import * as React from 'react';
 import { FieldError } from 'react-hook-form';
 
-interface withErrorReturn {
+export interface withErrorReturn {
   /** when true, it will show the red border for the textfield */
   error: boolean;
   /** returns the error message text when error is true */

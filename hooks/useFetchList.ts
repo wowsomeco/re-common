@@ -41,7 +41,7 @@ export class FetchListState {
   }
 }
 
-interface FetchListProps<T> {
+export interface FetchListProps<T> {
   /** the max length of the items */
   count: number;
   /** the current page */

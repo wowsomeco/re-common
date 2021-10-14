@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { CommonProps } from '../common';
 
-interface Props extends CommonProps {
+export interface Props extends CommonProps {
   fillColor?: string;
   size?: number;
   height?: number;

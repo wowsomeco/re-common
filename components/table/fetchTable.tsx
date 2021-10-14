@@ -16,7 +16,7 @@ type ListResponseModel<T> = {
   count: number;
 };
 
-interface QueryURL {
+export interface QueryURL {
   limit: number;
   offset: number;
 }

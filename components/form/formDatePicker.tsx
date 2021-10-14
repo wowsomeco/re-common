@@ -7,7 +7,7 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { FormFieldProps } from './common';
 import { withError } from './utils';
 
-interface FormDatePickerProps
+export interface FormDatePickerProps
   extends Omit<FormFieldProps, 'onChange'>,
     Omit<DatePickerProps, 'value' | 'onChange' | 'renderInput'> {
   required?: boolean;
