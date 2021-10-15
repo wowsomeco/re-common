@@ -32,7 +32,7 @@ const DummyAutoComplete: React.FC<{ label: string }> = ({ label }) => {
 };
 
 type EnumModel = Record<string, any>;
-interface EnumWithCount {
+export interface EnumWithCount {
   data: EnumModel[];
   count: number;
 }

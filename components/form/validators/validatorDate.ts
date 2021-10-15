@@ -4,7 +4,7 @@ dayjs.extend(customParseFormat);
 
 import { Validator } from './base';
 
-interface DateRangeOption {
+export interface DateRangeOption {
   min?: string | number | Date;
   max?: string | number | Date;
 }

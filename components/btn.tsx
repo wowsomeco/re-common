@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { SpinningCircles } from '~w-common/components';
 
-interface BtnProps extends ButtonProps<any> {
+export interface BtnProps extends ButtonProps<any> {
   loading?: boolean;
   loadingColor?: string;
 }

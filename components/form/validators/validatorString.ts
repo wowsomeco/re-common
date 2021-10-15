@@ -2,7 +2,7 @@ import { hasWhiteSpace, isDigitOnly, isEmail } from '~w-common/scripts';
 
 import { Validator } from './base';
 
-interface SpecialCharOption {
+export interface SpecialCharOption {
   errMsg?: string;
   accept?: string;
 }

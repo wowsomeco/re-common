@@ -62,7 +62,7 @@ const useStyles = (drawerWidth: number = 240, isMenuBar: boolean = false) =>
     })
   );
 
-interface LayoutProps {
+export interface LayoutProps {
   menuBar?: React.ReactNode;
   sideBar: React.ReactNode;
   sideBarWidth?: number;

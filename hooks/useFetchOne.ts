@@ -5,7 +5,7 @@ import { useAsync, useMountedState } from 'react-use';
 import { PAGE_NOT_FOUND } from '~app/scripts/constants';
 import { useFetchJson } from '~w-common/hooks';
 
-interface FetchOneProps<T> {
+export interface FetchOneProps<T> {
   result: T | undefined;
   loading: boolean;
   /** can be used to re fetch the data again by the caller*/

@@ -2,7 +2,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { Resp } from '~w-common/hooks';
 
-interface ReloadFormProps<T> {
+export interface ReloadFormProps<T> {
   reload: (response: Resp<T>) => void;
 }
 

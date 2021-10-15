@@ -15,7 +15,7 @@ export function mapRecord<T>(
 }
 
 /** [[loop]] function callback */
-interface LoopCallback<T> {
+export interface LoopCallback<T> {
   item: T;
   idx: number;
   first: boolean;

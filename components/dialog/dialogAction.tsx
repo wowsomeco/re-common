@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Btn } from '~w-common/components/btn';
 
-interface DialogActionProps {
+export interface DialogActionProps {
   isNew: boolean;
   loading: boolean;
   onCancel: () => void;

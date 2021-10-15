@@ -14,7 +14,7 @@ import {
   useFileUpload
 } from '~w-common/hooks/useFileUpload';
 
-interface FormFileProps extends LocalFormFileProps {
+export interface FormFileProps extends LocalFormFileProps {
   endpoint: string;
   method?: UploadMethod;
   onUploaded?: (f: FileModel) => void;
