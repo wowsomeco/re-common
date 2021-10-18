@@ -7,7 +7,7 @@ import { ZINDEX_MODAL } from '~w-common/scripts/constants';
 import { toRgba } from '../scripts';
 import { CommonProps } from './common';
 
-type KeyTrigger = [KeyFilter, () => void];
+export type KeyTrigger = [KeyFilter, () => void];
 
 export interface ModalProps extends CommonProps {
   open: boolean;

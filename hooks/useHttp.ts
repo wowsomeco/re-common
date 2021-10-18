@@ -56,7 +56,7 @@ export interface FetchProps<T> extends FetchStatelessCb<T> {
   result: T | undefined;
 }
 
-type FetchState<T> = {
+export type FetchState<T> = {
   loading: boolean;
   result?: T | undefined;
 };

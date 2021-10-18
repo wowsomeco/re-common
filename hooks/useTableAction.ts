@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-type TableActionProps = {
+export type TableActionProps = {
   toDetail: (id: number | undefined) => void;
   toNew: () => void;
 };

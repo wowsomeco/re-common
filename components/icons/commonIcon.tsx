@@ -7,7 +7,11 @@ import {
 } from 'react-icons/fi';
 import { IconBaseProps } from 'react-icons/lib';
 
-type IconName = 'doubleArrowLeft' | 'doubleArrowRight' | 'home' | 'search';
+export type IconName =
+  | 'doubleArrowLeft'
+  | 'doubleArrowRight'
+  | 'home'
+  | 'search';
 
 const icons: Record<IconName, (props: IconBaseProps) => JSX.Element> = {
   doubleArrowLeft: (p) => <FiChevronsLeft {...p} />,

@@ -7,9 +7,15 @@ import { loop } from '~w-common/scripts';
 
 import { CommonProps } from '.';
 
-type fontSize = 'xs' | 'sm' | 'md' | 'lg';
-type Gap = 'none' | 'xs' | 'sm' | 'md' | 'lg';
-type Align = 'left' | 'center' | 'right' | 'between' | 'around' | 'evenly';
+export type fontSize = 'xs' | 'sm' | 'md' | 'lg';
+export type Gap = 'none' | 'xs' | 'sm' | 'md' | 'lg';
+export type Align =
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'between'
+  | 'around'
+  | 'evenly';
 
 const FontSizeOptions: Record<fontSize, string> = {
   xs: 'text-xs',
@@ -35,7 +41,7 @@ const AlignOptions: Record<Align, string> = {
   evenly: 'justify-evenly'
 };
 
-type EachCrumbCbItems = {
+export type EachCrumbCbItems = {
   /** The route name */
   name: string;
   /** The previous route path */
