@@ -5,12 +5,12 @@ import { removeEmpty } from '~w-common/scripts';
 
 import { HttpContentType } from './useHttp';
 
-type OnSubmitProps<T> = {
+export type OnSubmitProps<T> = {
   doSubmit: (model: T) => Promise<void>;
   loading: boolean;
 };
 
-type OnSubmitted<T> = ((resp: Resp<T>) => void) | undefined;
+export type OnSubmitted<T> = ((resp: Resp<T>) => void) | undefined;
 
 export interface SubmitOptions<T> {
   /** `true`: POST, `false`: PUT */

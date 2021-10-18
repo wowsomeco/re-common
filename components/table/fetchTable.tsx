@@ -11,7 +11,7 @@ import { useFetchJson } from '~w-common/hooks';
 import useTableAction from '~w-common/hooks/useTableAction';
 
 // list response with count
-type ListResponseModel<T> = {
+export type ListResponseModel<T> = {
   data: T[];
   count: number;
 };

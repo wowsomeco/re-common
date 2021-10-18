@@ -1,5 +1,5 @@
-type ValidationRule = (v: any) => string | undefined;
-type ValidationUnless = (v: any) => boolean;
+export type ValidationRule = (v: any) => string | undefined;
+export type ValidationUnless = (v: any) => boolean;
 
 export class Validator {
   protected _rules: ValidationRule[] = [];

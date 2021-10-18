@@ -1,4 +1,4 @@
-type Observer<T> = (t: T) => void;
+export type Observer<T> = (t: T) => void;
 
 export default class Observable<T> {
   private _observers: Observer<T>[] = [];
