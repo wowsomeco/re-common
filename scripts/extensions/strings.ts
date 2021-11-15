@@ -53,7 +53,7 @@ export function capitalize(
 
   for (let i = 0; i < splits.length; i++) {
     const s = splits[i];
-    capitalized += `${s[0].toUpperCase()}${s.substring(1)}`;
+    capitalized += `${s[0] ? s[0].toUpperCase() : ''}${s.substring(1)}`;
     // if last, replace separator with the provided replaceWith str
     if (i < splits.length - 1) capitalized += replaceWith;
   }
@@ -90,7 +90,8 @@ export function isEmptyStr(s: string): boolean {
 export function isEmail(email: string, nullable: boolean = false): boolean {
   if (nullable && !email) return true;
 
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
 
