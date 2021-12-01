@@ -53,12 +53,12 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
     endpoint: endpoint || ''
   });
 
-  const [result, setResult] = React.useState<EnumModel[]>([]);
+  const [result, setResult] = React.useState<EnumModel[]>();
   const [fetching, setFetching] = React.useState(true);
-  const loading = fetching;
+  const loading = fetching || !result;
 
   const findNameById = (id: string) => {
-    const find = result.find((x) => get(x, optionId) === id);
+    const find = result?.find((x) => get(x, optionId) === id);
 
     // support custom name labeling, eg; combining multiple field value
     if (getOptionLabel) return getOptionLabel(find);
@@ -93,7 +93,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
   // might've been a bug with mui...
   // TODO: might want to refactor this later
 
-  return fetching ? (
+  return loading ? (
     <DummyAutoComplete label={label} />
   ) : (
     <Controller
