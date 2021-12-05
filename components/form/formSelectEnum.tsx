@@ -104,7 +104,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
           fullWidth
           loading={loading}
           disabled={disabled}
-          options={result.map((x) => get(x, optionId))}
+          options={(result || []).map((x) => get(x, optionId))}
           getOptionLabel={findNameById}
           renderInput={(params) => (
             <TextField
