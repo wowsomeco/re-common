@@ -142,20 +142,21 @@ export const useStatelessFetch = <T>(
     let data: any;
     let dataTypeError: any;
 
-    // if status ok process data
-    if (ok) {
-      try {
-        data = await response[expectedResponseType]();
-      } catch (err) {
-        dataTypeError = err;
-      }
-
-      return { status, ok, data, error: data?.error || dataTypeError };
+    try {
+      data = await response[expectedResponseType]();
+    } catch (err) {
+      dataTypeError = err;
     }
 
     // if status not ok do something based on status
     statusCallbacks?.[status]?.();
-    return { status, ok, data, error: response.statusText };
+
+    return {
+      status,
+      ok,
+      data,
+      error: data?.error || dataTypeError || response.statusText
+    };
   };
 
   return { submit };
