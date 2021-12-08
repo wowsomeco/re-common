@@ -155,7 +155,8 @@ export const useStatelessFetch = <T>(
       status,
       ok,
       data,
-      error: data?.error || dataTypeError || response.statusText
+      error:
+        data?.error || dataTypeError || (!ok ? response.statusText : undefined)
     };
   };
 
