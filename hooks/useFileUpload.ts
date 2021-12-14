@@ -14,11 +14,15 @@ export interface FileModel {
   type: string;
 }
 
+export interface FileUploadOpts {
+  query?: string;
+}
+
 export interface FileUploadState {
   progress: number;
   uploading: boolean;
   done: boolean;
-  upload: (file: File) => Promise<FileModel>;
+  upload: (file: File, opts?: FileUploadOpts) => Promise<FileModel>;
 }
 
 export const useFileUpload = (
@@ -32,7 +36,12 @@ export const useFileUpload = (
   const done = progress === 100;
   const uploading = progress > 0 && !done;
 
-  const upload = (file: File): Promise<FileModel> => {
+  const upload = (
+    file: File,
+    opts: FileUploadOpts = {}
+  ): Promise<FileModel> => {
+    const { query = '' } = opts;
+
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = () => {
@@ -56,7 +65,7 @@ export const useFileUpload = (
         }
       };
 
-      xhr.open(method.toString(), apiUrl(endpoint));
+      xhr.open(method.toString(), apiUrl(endpoint + query));
       const token = checkToken();
       if (token) xhr.setRequestHeader('Authorization', token);
       if (tenantKey) xhr.setRequestHeader(tenantKey, subDomain());

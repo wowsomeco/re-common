@@ -204,7 +204,12 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
           acceptedFileItems
         )}
         {canUpload && !onChange ? (
-          <Btn onClick={doUpload} loading={uploading} variant='outlined'>
+          <Btn
+            type='button'
+            onClick={doUpload}
+            loading={uploading}
+            variant='outlined'
+          >
             Upload
           </Btn>
         ) : null}
