@@ -9,14 +9,17 @@ import { useStatelessFetchJson } from '~w-common/hooks';
 import { FormFieldProps } from './common';
 import { withError } from './utils';
 
-export interface SelectEnumProps extends Omit<FormFieldProps, 'onChange'> {
+export interface SelectEnumPropsBase extends Omit<FormFieldProps, 'onChange'> {
   label: string;
-  endpoint: string | null;
   disabled?: boolean;
   optionId?: string;
   optionName?: string;
-  getOptionLabel?: (option?: EnumModel) => string;
+  getOptionLabel?: (option?: EnumModel, index?: number) => string;
   onChange?: (v: string | null) => void;
+}
+
+export interface SelectEnumProps extends SelectEnumPropsBase {
+  endpoint: string | null;
 }
 
 const DummyAutoComplete: React.FC<{ label: string }> = ({ label }) => {
@@ -37,16 +40,88 @@ export interface EnumWithCount {
   count: number;
 }
 
-export const FormSelectEnum: React.FC<SelectEnumProps> = ({
+export const FormSelectEnumLocal: React.FC<
+  SelectEnumPropsBase & {
+    options?: EnumModel[];
+    loading?: boolean;
+  }
+> = ({
   name,
   rules,
   label,
-  endpoint,
+  options,
+  loading,
   disabled,
   optionId = 'id',
   optionName = 'name',
   getOptionLabel,
   onChange
+}) => {
+  const findNameById = (id: string) => {
+    const findIndex = options?.findIndex((x) => get(x, optionId) === id);
+    const find =
+      findIndex != null && findIndex >= 0 ? options?.[findIndex] : undefined;
+
+    // support custom name labeling, eg; combining multiple field value
+    if (getOptionLabel) return getOptionLabel(find, findIndex);
+
+    return find ? get(find, optionName) : '';
+  };
+
+  const { control, errors } = useFormContext();
+
+  // need to render dummy on fetching,
+  // otherwise the Textfield in Controller wont get updated when performing async action
+  // might've been a bug with mui...
+  // TODO: might want to refactor this later
+
+  return loading ? (
+    <DummyAutoComplete label={label} />
+  ) : (
+    <Controller
+      rules={rules}
+      defaultValue={null}
+      render={(props) => (
+        <Autocomplete<string>
+          fullWidth
+          loading={loading}
+          disabled={disabled}
+          options={(options || []).map((x) => get(x, optionId))}
+          getOptionLabel={findNameById}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              {...withError(name, errors)}
+              label={label}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {loading ? (
+                      <CircularProgress color='primary' size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                )
+              }}
+            />
+          )}
+          {...props}
+          onChange={(_, data) => {
+            props.onChange(data);
+            onChange?.(data);
+          }}
+        />
+      )}
+      name={name}
+      control={control}
+    />
+  );
+};
+
+export const FormSelectEnum: React.FC<SelectEnumProps> = ({
+  endpoint,
+  ...props
 }) => {
   const { submit } = useStatelessFetchJson<EnumWithCount | EnumModel[]>({
     method: 'GET',
@@ -55,18 +130,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
 
   const [result, setResult] = React.useState<EnumModel[]>();
   const [fetching, setFetching] = React.useState(true);
-  const loading = fetching || !result;
-
-  const findNameById = (id: string) => {
-    const find = result?.find((x) => get(x, optionId) === id);
-
-    // support custom name labeling, eg; combining multiple field value
-    if (getOptionLabel) return getOptionLabel(find);
-
-    return find ? get(find, optionName) : '';
-  };
-
-  const { control, errors } = useFormContext();
+  const loading = fetching;
 
   const isMounted = useMountedState();
 
@@ -88,53 +152,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
     })();
   }, [endpoint]);
 
-  // need to render dummy on fetching,
-  // otherwise the Textfield in Controller wont get updated when performing async action
-  // might've been a bug with mui...
-  // TODO: might want to refactor this later
-
-  return loading ? (
-    <DummyAutoComplete label={label} />
-  ) : (
-    <Controller
-      rules={rules}
-      defaultValue={null}
-      render={(props) => (
-        <Autocomplete<string>
-          fullWidth
-          loading={loading}
-          disabled={disabled}
-          options={(result || []).map((x) => get(x, optionId))}
-          getOptionLabel={findNameById}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              {...withError(name, errors)}
-              label={label}
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {fetching ? (
-                      <CircularProgress color='primary' size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                )
-              }}
-            />
-          )}
-          {...props}
-          onChange={(_, data) => {
-            props.onChange(data);
-            onChange?.(data);
-          }}
-        />
-      )}
-      name={name}
-      control={control}
-    />
-  );
+  return <FormSelectEnumLocal options={result} loading={loading} {...props} />;
 };
 
 export interface SelectEnumLainnyaProps extends SelectEnumProps {
