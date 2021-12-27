@@ -13,7 +13,7 @@ import useTableAction from '~w-common/hooks/useTableAction';
 
 export interface TableData<T> {
   header: string;
-  row: (t: T) => React.ReactNode;
+  row: (t: T, rowNumber: number) => React.ReactNode;
 }
 
 export interface ActionCallback<T> {
@@ -92,17 +92,18 @@ const LocalTable = <T extends Record<string, any>>(
     ...other
   } = props;
 
-  const [disabled, setDisabled] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [dataInPage, setDataInPage] = React.useState(data);
-
   const { toDetail, toNew } = useTableAction({ detailsRoute });
+  const [disabled, setDisabled] = React.useState(false);
 
-  const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
+  // manage active page
+  const [page, setPage] = React.useState(1);
+  const doChangePage = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
     if (onPageChange) onPageChange(value);
   };
 
+  // set partial data based on active page
+  const [dataInPage, setDataInPage] = React.useState(data);
   React.useEffect(() => {
     if (!count) {
       const newDataInPage = paginate([...data], itemPerPage, page);
@@ -112,12 +113,18 @@ const LocalTable = <T extends Record<string, any>>(
     }
   }, [page, data]);
 
+  // define page count based on data count
   const pageCount = count
     ? Math.ceil(count / itemPerPage)
     : Math.ceil(data.length / itemPerPage);
 
   const onSingleRowClick = (data) =>
     onRowClick ? onRowClick(data) : toDetail(data?.[idKey]);
+
+  const currentPageStartCount = itemPerPage * page - itemPerPage + 1;
+
+  const currentPageEndCount =
+    page * itemPerPage > (count || 0) ? count : page * itemPerPage;
 
   return loading ? (
     <div className='w-full mt-5'>
@@ -189,7 +196,7 @@ const LocalTable = <T extends Record<string, any>>(
                   dataHeader={item.header}
                   singleColumn={singleColumn}
                 >
-                  {item.row(data)}
+                  {item.row(data, i + currentPageStartCount)}
                 </Td>
               ))}
               {action?.({ setDisabled, item: data })}
@@ -197,13 +204,16 @@ const LocalTable = <T extends Record<string, any>>(
           )}
         />
       </div>
-      <div className='mt-5 flex justify-end'>
+      <div className='mt-5 flex justify-end items-center space-x-5'>
+        <div>
+          {currentPageStartCount} - {currentPageEndCount} of {count}
+        </div>
         <Pagination
           count={pageCount}
           variant='outlined'
           color='primary'
           page={page}
-          onChange={handleChange}
+          onChange={doChangePage}
         />
       </div>
     </>
