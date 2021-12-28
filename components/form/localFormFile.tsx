@@ -39,18 +39,28 @@ const rejectStyle: React.CSSProperties = {
   borderColor: '#ff1744'
 };
 
-export interface LocalFormFileProps {
-  label: string;
+export interface LocalFormFileProps extends Omit<ViewFormFileProps, 'file'> {
   accept?: string | string[];
   defaultValue?: FileModel;
   disabled?: boolean;
   uploading?: boolean;
+  dropText?: string;
   onUpload?: (f: File) => Promise<void>;
   onChange?: (f: File) => void;
   renderLoader?: () => React.ReactNode;
 }
 
-export const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
+export interface RenderDownloaderOpts {
+  downloading: boolean;
+  download: () => void | Promise<void>;
+}
+
+export type RenderDownloader = (opts: RenderDownloaderOpts) => React.ReactNode;
+
+export const Downloader: React.FC<{
+  file: FileModel;
+  renderDownloader?: RenderDownloader;
+}> = ({ file, renderDownloader }) => {
   const [downloading, setDownloading] = React.useState(false);
 
   const download = async () => {
@@ -60,6 +70,10 @@ export const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
     await saveAs(file);
     setDownloading(false);
   };
+
+  if (renderDownloader) {
+    return <>{renderDownloader({ downloading, download })}</>;
+  }
 
   return downloading ? (
     <CircularProgress />
@@ -72,16 +86,33 @@ export const Downloader: React.FC<{ file: FileModel }> = ({ file }) => {
   );
 };
 
-export const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
+export interface RenderPreviewerOpts {
+  preview: () => void | Promise<void>;
+}
+
+export type RenderPreviewer = (opts: RenderPreviewerOpts) => React.ReactNode;
+
+export const Previewer: React.FC<{
+  file: FileModel;
+  renderPreviewer?: RenderPreviewer;
+}> = ({ file, renderPreviewer }) => {
   const [openPreview, setOpenPreview] = React.useState(false);
+
+  const doOpenPreview = React.useCallback(() => {
+    setOpenPreview(true);
+  }, []);
 
   return (
     <>
-      <Tooltip title='Show File' arrow>
-        <IconButton onClick={() => setOpenPreview(true)}>
-          <FiEye className='cursor-pointer text-blue-500' />
-        </IconButton>
-      </Tooltip>
+      {renderPreviewer ? (
+        renderPreviewer({ preview: doOpenPreview })
+      ) : (
+        <Tooltip title='Show File' arrow>
+          <IconButton onClick={doOpenPreview}>
+            <FiEye className='cursor-pointer text-blue-500' />
+          </IconButton>
+        </Tooltip>
+      )}
       <FilePreview
         file={file}
         open={openPreview}
@@ -91,11 +122,21 @@ export const Previewer: React.FC<{ file: FileModel }> = ({ file }) => {
   );
 };
 
-export const ViewFormFile: React.FC<{
+export interface ViewFormFileProps {
   label: string;
   file?: FileModel;
   notFound?: React.ReactNode;
-}> = ({ label, file, notFound = null }) => {
+  renderDownloader?: RenderDownloader;
+  renderPreviewer?: RenderPreviewer;
+}
+
+export const ViewFormFile: React.FC<ViewFormFileProps> = ({
+  label,
+  file,
+  notFound = null,
+  renderDownloader,
+  renderPreviewer
+}) => {
   return (
     <div
       style={{ minHeight: '50px' }}
@@ -103,9 +144,9 @@ export const ViewFormFile: React.FC<{
     >
       <p className='text-gray-500'>{label}</p>
       {file ? (
-        <div className='flex'>
-          <Downloader file={file} />
-          <Previewer file={file} />
+        <div className='flex space-x-3'>
+          <Downloader file={file} renderDownloader={renderDownloader} />
+          <Previewer file={file} renderPreviewer={renderPreviewer} />
         </div>
       ) : (
         notFound
@@ -116,13 +157,17 @@ export const ViewFormFile: React.FC<{
 
 const LocalFormFile: React.FC<LocalFormFileProps> = ({
   label,
+  notFound,
   accept,
   defaultValue,
   disabled = false,
   uploading = false,
+  dropText = 'Drag and drop the file here, or click to upload',
   onUpload,
   onChange,
-  renderLoader
+  renderLoader,
+  renderDownloader,
+  renderPreviewer
 }) => {
   const {
     acceptedFiles,
@@ -172,7 +217,13 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
 
   return (
     <div className='w-full'>
-      <ViewFormFile label={label} file={defaultValue} />
+      <ViewFormFile
+        label={label}
+        file={defaultValue}
+        notFound={notFound}
+        renderDownloader={renderDownloader}
+        renderPreviewer={renderPreviewer}
+      />
       <div {...getRootProps({ style })}>
         {uploading ? (
           <div className={TW_CENTER}>
@@ -189,9 +240,7 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
             ) : (
               <>
                 <input {...getInputProps()} />
-                <p className='cursor-pointer hover:text-blue-500'>
-                  Drag and drop the file here, or click to upload
-                </p>
+                <p className='cursor-pointer hover:text-blue-500'>{dropText}</p>
               </>
             )}
           </>
