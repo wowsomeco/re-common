@@ -45,6 +45,8 @@ export interface LocalFormFileProps extends Omit<ViewFormFileProps, 'file'> {
   disabled?: boolean;
   uploading?: boolean;
   dropText?: string;
+  /** custom header to replace viewer */
+  header?: React.ReactNode;
   onUpload?: (f: File) => Promise<void>;
   onChange?: (f: File) => void;
   renderLoader?: () => React.ReactNode;
@@ -128,6 +130,7 @@ export interface ViewFormFileProps {
   notFound?: React.ReactNode;
   renderDownloader?: RenderDownloader;
   renderPreviewer?: RenderPreviewer;
+  renderDelete?: () => React.ReactNode;
 }
 
 export const ViewFormFile: React.FC<ViewFormFileProps> = ({
@@ -135,18 +138,21 @@ export const ViewFormFile: React.FC<ViewFormFileProps> = ({
   file,
   notFound = null,
   renderDownloader,
-  renderPreviewer
+  renderPreviewer,
+  /** TODO: give default value to renderDelete */
+  renderDelete = () => null
 }) => {
   return (
     <div
       style={{ minHeight: '50px' }}
-      className='flex items-center justify-between mb-2'
+      className='flex flex-wrap items-center justify-between mb-2 gap-3'
     >
       <p className='text-gray-500'>{label}</p>
       {file ? (
         <div className='flex space-x-3'>
           <Downloader file={file} renderDownloader={renderDownloader} />
           <Previewer file={file} renderPreviewer={renderPreviewer} />
+          {renderDelete()}
         </div>
       ) : (
         notFound
@@ -167,7 +173,9 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
   onChange,
   renderLoader,
   renderDownloader,
-  renderPreviewer
+  renderPreviewer,
+  renderDelete,
+  header
 }) => {
   const {
     acceptedFiles,
@@ -217,13 +225,18 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
 
   return (
     <div className='w-full'>
-      <ViewFormFile
-        label={label}
-        file={defaultValue}
-        notFound={notFound}
-        renderDownloader={renderDownloader}
-        renderPreviewer={renderPreviewer}
-      />
+      {header ? (
+        header
+      ) : (
+        <ViewFormFile
+          label={label}
+          file={defaultValue}
+          notFound={notFound}
+          renderDownloader={renderDownloader}
+          renderPreviewer={renderPreviewer}
+          renderDelete={renderDelete}
+        />
+      )}
       <div {...getRootProps({ style })}>
         {uploading ? (
           <div className={TW_CENTER}>
