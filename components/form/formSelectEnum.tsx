@@ -54,6 +54,7 @@ export const FormSelectEnumLocal: React.FC<
   disabled,
   optionId = 'id',
   optionName = 'name',
+  defaultValue = null,
   getOptionLabel,
   onChange
 }) => {
@@ -80,7 +81,7 @@ export const FormSelectEnumLocal: React.FC<
   ) : (
     <Controller
       rules={rules}
-      defaultValue={null}
+      defaultValue={defaultValue}
       render={(props) => (
         <Autocomplete<string>
           fullWidth
