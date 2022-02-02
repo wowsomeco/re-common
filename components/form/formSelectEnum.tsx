@@ -40,12 +40,12 @@ export interface EnumWithCount {
   count: number;
 }
 
-export const FormSelectEnumLocal: React.FC<
-  SelectEnumPropsBase & {
-    options?: EnumModel[];
-    loading?: boolean;
-  }
-> = ({
+export interface FormSelectEnumLocalProps extends SelectEnumPropsBase {
+  options?: EnumModel[];
+  loading?: boolean;
+}
+
+export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
   name,
   rules,
   label,
