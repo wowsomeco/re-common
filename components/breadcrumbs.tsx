@@ -7,7 +7,7 @@ import { loop } from '~w-common/scripts';
 
 import { CommonProps } from '.';
 
-export type fontSize = 'xs' | 'sm' | 'md' | 'lg';
+export type FontSize = 'xs' | 'sm' | 'md' | 'lg';
 export type Gap = 'none' | 'xs' | 'sm' | 'md' | 'lg';
 export type Align =
   | 'left'
@@ -17,7 +17,7 @@ export type Align =
   | 'around'
   | 'evenly';
 
-const FontSizeOptions: Record<fontSize, string> = {
+const FontSizeOptions: Record<FontSize, string> = {
   xs: 'text-xs',
   sm: 'text-sm',
   md: 'text-md',
@@ -77,7 +77,7 @@ export interface BreadcrumbsProps extends CommonProps {
    * Well, it's the font size.
    * @default "sm"
    */
-  fontSize?: string;
+  fontSize?: FontSize;
   /**
    * The gutter value allows you control over the space between the breadcrumb elements.
    * @default "sm"

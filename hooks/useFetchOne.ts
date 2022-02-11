@@ -2,7 +2,6 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAsync, useMountedState } from 'react-use';
 
-import { PAGE_NOT_FOUND } from '~app/scripts/constants';
 import { useFetchJson } from '~w-common/hooks';
 
 export interface FetchOneProps<T> {
@@ -17,7 +16,8 @@ export interface FetchOneProps<T> {
  */
 const useFetchOne = <T>(
   endpoint: string,
-  execOnMounted: boolean
+  execOnMounted: boolean,
+  notFoundPage: string = '/not-found'
 ): FetchOneProps<T> => {
   const history = useHistory();
   const { result, loading, submit } = useFetchJson<T>(
@@ -40,7 +40,7 @@ const useFetchOne = <T>(
 
     if (isMounted()) {
       if (status === 404) {
-        history.push(PAGE_NOT_FOUND);
+        history.push(notFoundPage);
       } else {
         setCheckStatus(false);
       }

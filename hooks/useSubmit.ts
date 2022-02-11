@@ -1,7 +1,10 @@
-import { responseNotif } from '~app/scripts/functions';
-import { useNotifProvider } from '~w-common/contexts/notifContext';
+import {
+  NotifContent,
+  useNotifProvider
+} from '~w-common/contexts/notifContext';
 import { Resp, useFetch } from '~w-common/hooks';
 import { removeEmpty } from '~w-common/scripts';
+import Observable from '~w-common/scripts/observable';
 
 import { HttpContentType } from './useHttp';
 
@@ -26,6 +29,11 @@ export interface SubmitOptions<T> {
   /** callback of values in the payload that you want to omit by returning true for each of them */
   omit?: ((v: any) => boolean)[];
   contentType?: HttpContentType;
+  handleNotif?: (
+    notif: Observable<NotifContent | undefined>,
+    response: Resp<any>,
+    isNew: boolean
+  ) => void;
 }
 
 /**
@@ -40,7 +48,8 @@ const useSubmit = <T>(options: SubmitOptions<T>): OnSubmitProps<T> => {
     onSubmitted,
     extraPayload = {},
     omit,
-    contentType = 'application/json'
+    contentType = 'application/json',
+    handleNotif
   } = options;
   const { notif } = useNotifProvider();
   const { submit, loading } = useFetch<T>({
@@ -56,7 +65,8 @@ const useSubmit = <T>(options: SubmitOptions<T>): OnSubmitProps<T> => {
     );
 
     const r = await submit({ body: payload });
-    responseNotif(notif, r, isNew);
+
+    handleNotif?.(notif, r, isNew);
     onSubmitted?.(r);
   };
 

@@ -2,13 +2,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  useTheme
-} from '@material-ui/core/styles';
+import { Theme, useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
+import { createStyles, makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight, FiMenu } from 'react-icons/fi';

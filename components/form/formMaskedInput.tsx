@@ -14,7 +14,15 @@ export interface MaskedInputProps
   extends Omit<FormInputProps, 'defaultValue' | 'onChange'>,
     Omit<
       NumberFormatProps,
-      'name' | 'prefix' | 'suffix' | 'min' | 'max' | 'step'
+      | 'name'
+      | 'prefix'
+      | 'suffix'
+      | 'min'
+      | 'max'
+      | 'step'
+      | 'onChange'
+      | 'size'
+      | 'color'
     > {
   type?: 'text' | 'tel' | 'password';
   onChange?: (values: NumberFormatValues) => void;
