@@ -4,6 +4,7 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import { Theme, useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
+import { CSSProperties } from '@mui/styles';
 import { createStyles, makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import * as React from 'react';
@@ -46,7 +47,7 @@ const useStyles = (drawerWidth: number = 240, isMenuBar: boolean = false) =>
         ...theme.mixins.toolbar,
         display: 'flex',
         alignItems: 'center'
-      },
+      } as CSSProperties,
       drawerPaper: {
         width: drawerWidth,
         overflowX: 'hidden'
