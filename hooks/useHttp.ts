@@ -75,6 +75,13 @@ export interface FetchOptions extends FetchOptionsBase {
   expectedResponseType?: HttpResponseBodyMethod;
 }
 
+const defaultStatusCallbacks = {
+  401: () =>
+    window.location.replace(
+      `${window.location.protocol}//${window.location.host}/login`
+    )
+};
+
 /**
  * Hook that wraps fetch with app context configuration accordingly.
  * This hook is stateless, it only returns the callback function for submitting.
@@ -93,72 +100,96 @@ export const useStatelessFetch = <T>(
     endpoint,
     contentType,
     expectedResponseType = 'json',
-    statusCallbacks = {
-      401: () =>
-        window.location.replace(
-          `${window.location.protocol}//${window.location.host}/login`
-        )
-    }
+    statusCallbacks = defaultStatusCallbacks
   } = options;
 
   const { apiUrl, checkToken, tenantKey } = useAppProvider();
-  const headers: HeadersInit = {};
-  if (contentType) headers['Content-Type'] = contentType;
-  // check first if token is provided
-  const token = checkToken();
-  if (token) headers['Authorization'] = token;
-  // check first whether tenantKey is defined
-  if (tenantKey) headers[tenantKey] = subDomain();
 
-  const submit = async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
-    const { body, query } = opts;
-    let theBody = body;
-    // TODO: might need to test it for different use cases later
-    // check if the content type is json
-    if (contentType === 'application/json') {
-      // if the body is not string e.g. a plain object, convert it to string
-      const shouldStringify = !!theBody && typeof theBody !== 'string';
-      if (shouldStringify) {
-        theBody = JSON.stringify(body);
+  /**
+   * Auto cancel fetch when component unmounted
+   * https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+   */
+  const abortController = React.useRef<AbortController>();
+  React.useEffect(() => {
+    abortController.current = new AbortController();
+
+    return () => {
+      abortController.current?.abort();
+    };
+  }, []);
+
+  const submit = React.useCallback(
+    async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
+      const headers: HeadersInit = {};
+      if (contentType) headers['Content-Type'] = contentType;
+      // check first if token is provided
+      const token = checkToken();
+      if (token) headers['Authorization'] = token;
+      // check first whether tenantKey is defined
+      if (tenantKey) headers[tenantKey] = subDomain();
+
+      const { body, query } = opts;
+      let theBody = body;
+      // TODO: might need to test it for different use cases later
+      // check if the content type is json
+      if (contentType === 'application/json') {
+        // if the body is not string e.g. a plain object, convert it to string
+        const shouldStringify = !!theBody && typeof theBody !== 'string';
+        if (shouldStringify) {
+          theBody = JSON.stringify(body);
+        }
       }
-    }
-    // if tenantKey is defined, then set it with the cur window subdomain as the value.
-    const req: RequestInit = {
+      // if tenantKey is defined, then set it with the cur window subdomain as the value.
+      const req: RequestInit = {
+        method,
+        body: theBody,
+        headers: headers,
+        signal: abortController?.current?.signal
+      };
+
+      const response: Response = await fetch(
+        apiUrl(endpoint + (query ?? '')),
+        req
+      );
+
+      // TODO: partially done, e.g. need to handle different http status code from the backend...
+      // e.g. callbacks when unauthorized, etc...
+      const status = response.status;
+      const ok = response.ok;
+
+      let data: any;
+      let dataTypeError: any;
+
+      try {
+        data = await response[expectedResponseType]();
+      } catch (err) {
+        dataTypeError = err;
+      }
+
+      // if status not ok do something based on status
+      statusCallbacks?.[status]?.();
+
+      return {
+        status,
+        ok,
+        data,
+        error:
+          data?.error ||
+          dataTypeError ||
+          (!ok ? response.statusText : undefined)
+      };
+    },
+    [
+      apiUrl,
+      checkToken,
+      contentType,
+      endpoint,
+      expectedResponseType,
       method,
-      body: theBody,
-      headers: headers
-    };
-
-    const response: Response = await fetch(
-      apiUrl(endpoint + (query ?? '')),
-      req
-    );
-
-    // TODO: partially done, e.g. need to handle different http status code from the backend...
-    // e.g. callbacks when unauthorized, etc...
-    const status = response.status;
-    const ok = response.ok;
-
-    let data: any;
-    let dataTypeError: any;
-
-    try {
-      data = await response[expectedResponseType]();
-    } catch (err) {
-      dataTypeError = err;
-    }
-
-    // if status not ok do something based on status
-    statusCallbacks?.[status]?.();
-
-    return {
-      status,
-      ok,
-      data,
-      error:
-        data?.error || dataTypeError || (!ok ? response.statusText : undefined)
-    };
-  };
+      statusCallbacks,
+      tenantKey
+    ]
+  );
 
   return { submit };
 };
@@ -189,18 +220,21 @@ export const useFetch = <T>(
 
   const isMounted = useMountedState();
 
-  const submit = async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
-    if (!state.loading) setState({ loading: true, result: undefined });
+  const submit = React.useCallback(
+    async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
+      if (!state.loading) setState({ loading: true, result: undefined });
 
-    const { status, ok, data, error } = await doFetch(opts);
+      const { status, ok, data, error } = await doFetch(opts);
 
-    // dont change state when no longer mounted
-    if (isMounted()) {
-      setState({ loading: false, result: data });
-    }
+      // dont change state when no longer mounted
+      if (isMounted()) {
+        setState({ loading: false, result: data });
+      }
 
-    return { status, ok, data, error };
-  };
+      return { status, ok, data, error };
+    },
+    [doFetch, isMounted, state.loading]
+  );
 
   return { loading: state.loading, result: state.result, submit };
 };
