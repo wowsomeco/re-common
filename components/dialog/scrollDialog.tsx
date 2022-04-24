@@ -6,14 +6,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from 'react';
 
-export interface ScrollDialogProps {
+export interface ScrollDialogProps
+  extends Omit<DialogProps, 'open' | 'onClose' | 'scroll'> {
   openDialog?: boolean;
   onClose?: () => void;
   renderButton?: (
     onOpen: (scrollType: DialogProps['scroll']) => void
   ) => React.ReactNode;
   title?: string;
-  content: React.ReactNode;
+  content: ((onClose: () => void) => React.ReactNode) | React.ReactNode;
   renderActions?: (onClose: () => void) => React.ReactNode;
 }
 
@@ -23,7 +24,9 @@ const ScrollDialog: React.FC<ScrollDialogProps> = ({
   renderButton,
   title,
   content,
-  renderActions
+  renderActions,
+  classes,
+  ...props
 }) => {
   const [open, setOpen] = React.useState(openDialog);
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
@@ -55,6 +58,26 @@ const ScrollDialog: React.FC<ScrollDialogProps> = ({
     setOpen(openDialog);
   }, [openDialog]);
 
+  const renderContent = () => {
+    if (typeof content === 'string') {
+      return (
+        <DialogContentText
+          id='scroll-dialog-description'
+          ref={descriptionElementRef}
+          tabIndex={-1}
+        >
+          {content}
+        </DialogContentText>
+      );
+    }
+
+    if (typeof content === 'function') {
+      return content(handleClose);
+    }
+
+    return content;
+  };
+
   return (
     <div>
       {renderButton && renderButton(handleClickOpen)}
@@ -63,22 +86,14 @@ const ScrollDialog: React.FC<ScrollDialogProps> = ({
         onClose={handleClose}
         scroll={scroll}
         classes={{
-          paper: 'w-full'
+          paper: 'w-full',
+          ...classes
         }}
+        {...props}
       >
         {title && <DialogTitle id='scroll-dialog-title'>{title}</DialogTitle>}
         <DialogContent dividers={scroll === 'paper'}>
-          {typeof content === 'string' ? (
-            <DialogContentText
-              id='scroll-dialog-description'
-              ref={descriptionElementRef}
-              tabIndex={-1}
-            >
-              {content}
-            </DialogContentText>
-          ) : (
-            content
-          )}
+          {renderContent()}
         </DialogContent>
         {renderActions && (
           <DialogActions>{renderActions(handleClose)}</DialogActions>
