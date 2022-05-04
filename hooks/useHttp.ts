@@ -111,15 +111,15 @@ export const useStatelessFetch = <T>(
    */
   const abortController = React.useRef<AbortController>();
   React.useEffect(() => {
-    abortController.current = new AbortController();
-
     return () => {
-      abortController.current?.abort();
+      abortController.current?.abort?.();
     };
   }, []);
 
   const submit = React.useCallback(
     async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
+      abortController.current = new AbortController();
+
       const headers: HeadersInit = {};
       if (contentType) headers['Content-Type'] = contentType;
       // check first if token is provided
@@ -147,37 +147,44 @@ export const useStatelessFetch = <T>(
         signal: abortController?.current?.signal
       };
 
-      const response: Response = await fetch(
-        apiUrl(endpoint + (query ?? '')),
-        req
-      );
-
-      // TODO: partially done, e.g. need to handle different http status code from the backend...
-      // e.g. callbacks when unauthorized, etc...
-      const status = response.status;
-      const ok = response.ok;
-
-      let data: any;
-      let dataTypeError: any;
-
       try {
-        data = await response[expectedResponseType]();
+        const response: void | Response = await fetch(
+          apiUrl(endpoint + (query ?? '')),
+          req
+        );
+
+        // TODO: partially done, e.g. need to handle different http status code from the backend...
+        // e.g. callbacks when unauthorized, etc...
+        const status = response.status;
+        const ok = response.ok;
+
+        let data: any;
+        let error: any;
+
+        try {
+          data = await response[expectedResponseType]();
+        } catch (err) {
+          error = err;
+        }
+
+        // if status not ok do something based on status
+        statusCallbacks?.[status]?.();
+
+        return {
+          status,
+          ok,
+          data,
+          error: data?.error || error || (!ok ? response.statusText : undefined)
+        };
       } catch (err) {
-        dataTypeError = err;
+        return {
+          status: 408,
+          ok: false,
+          error: abortController.current?.signal?.aborted
+            ? 'Request Aborted'
+            : err?.message || err
+        };
       }
-
-      // if status not ok do something based on status
-      statusCallbacks?.[status]?.();
-
-      return {
-        status,
-        ok,
-        data,
-        error:
-          data?.error ||
-          dataTypeError ||
-          (!ok ? response.statusText : undefined)
-      };
     },
     [
       apiUrl,
