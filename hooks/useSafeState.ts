@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 export function useSafeState<T>(
-  initialState: T
-): [T, React.Dispatch<React.SetStateAction<T>>] {
+  initialState?: T
+): [T | undefined, React.Dispatch<React.SetStateAction<T>>] {
   const [state, setState] = React.useState(initialState);
 
   const mountedRef = React.useRef(false);
