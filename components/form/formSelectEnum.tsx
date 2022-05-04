@@ -129,7 +129,7 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
     endpoint: endpoint || ''
   });
 
-  const [result, setResult] = useSafeState<EnumModel[]>(undefined);
+  const [result, setResult] = useSafeState<EnumModel[]>([]);
   const [fetching, setFetching] = useSafeState(true);
   const loading = fetching;
 
