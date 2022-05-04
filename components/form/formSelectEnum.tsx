@@ -2,9 +2,9 @@ import { Autocomplete, CircularProgress, TextField } from '@material-ui/core';
 import get from 'lodash.get';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { useMountedState } from 'react-use';
 
 import { useStatelessFetchJson } from '~w-common/hooks';
+import { useSafeState } from '~w-common/hooks/useSafeState';
 
 import { FormFieldProps } from './common';
 import { withError } from './utils';
@@ -129,11 +129,9 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
     endpoint: endpoint || ''
   });
 
-  const [result, setResult] = React.useState<EnumModel[]>();
-  const [fetching, setFetching] = React.useState(true);
+  const [result, setResult] = useSafeState<EnumModel[]>(undefined);
+  const [fetching, setFetching] = useSafeState(true);
   const loading = fetching;
-
-  const isMounted = useMountedState();
 
   React.useEffect(() => {
     (async () => {
@@ -143,10 +141,8 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
         setFetching(true);
         const { data } = await submit();
 
-        if (isMounted()) {
-          setResult((data as EnumWithCount)?.data || data || []);
-          setFetching(false);
-        }
+        setResult((data as EnumWithCount)?.data || data || []);
+        setFetching(false);
       } else {
         setResult([]);
       }
