@@ -45,6 +45,8 @@ export interface LocalFormFileProps extends Omit<ViewFormFileProps, 'file'> {
   disabled?: boolean;
   uploading?: boolean;
   dropText?: string;
+  maxSize?: number;
+  maxFiles?: number;
   /** custom header to replace viewer */
   header?: React.ReactNode;
   onUpload?: (f: File) => Promise<void>;
@@ -169,6 +171,8 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
   disabled = false,
   uploading = false,
   dropText = 'Drag and drop the file here, or click to upload',
+  maxSize = 31457280, // 30 mb
+  maxFiles = 1,
   onUpload,
   onChange,
   renderLoader,
@@ -187,9 +191,9 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
     isDragReject
   } = useDropzone({
     accept,
-    maxFiles: 1,
+    maxFiles,
     disabled: uploading || disabled,
-    maxSize: 31457280 // 30 mb
+    maxSize
   });
 
   const acceptedFileItems = acceptedFiles.map((file: FileWithPath) => (
