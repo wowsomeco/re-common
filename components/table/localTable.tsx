@@ -98,6 +98,8 @@ const LocalTable = <T extends Record<string, any>>(
   // manage active page
   const [page, setPage] = React.useState(1);
   const doChangePage = (_: React.ChangeEvent<unknown>, value: number) => {
+    if (!value) return;
+
     setPage(value);
     if (onPageChange) onPageChange(value);
   };
@@ -206,7 +208,8 @@ const LocalTable = <T extends Record<string, any>>(
       </div>
       <div className='mt-5 flex justify-end items-center space-x-5'>
         <div>
-          {currentPageStartCount} - {currentPageEndCount} of {count}
+          {currentPageStartCount} - {currentPageEndCount} of{' '}
+          {count || data.length}
         </div>
         <Pagination
           count={pageCount}
