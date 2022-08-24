@@ -58,11 +58,10 @@ const FormFile: React.FC<FormFileProps> = ({
   uploading: uploadingProp,
   ...props
 }) => {
-  const {
-    progress,
-    uploading = uploadingProp,
-    upload
-  } = useFileUpload(endpoint, method);
+  const { progress, uploading = uploadingProp, upload } = useFileUpload(
+    endpoint,
+    method
+  );
   const doUpload = async (file: File) => {
     const f = await upload(file);
     onUploaded?.(f);

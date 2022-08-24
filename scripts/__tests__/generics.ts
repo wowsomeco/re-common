@@ -7,7 +7,7 @@ import {
   tap
 } from '../extensions';
 
-export interface TapModel {
+interface TapModel {
   username: string;
   password: string;
 }
