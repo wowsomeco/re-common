@@ -18,24 +18,25 @@ import {
 const SELF_CENTER =
   'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2';
 
-const IFrameWithLoader: React.FC<CommonProps & { title: string; src: string }> =
-  ({ title, src, className, ...other }) => {
-    const [loading, setLoading] = React.useState(true);
+const IFrameWithLoader: React.FC<
+  CommonProps & { title: string; src: string }
+> = ({ title, src, className, ...other }) => {
+  const [loading, setLoading] = React.useState(true);
 
-    return (
-      <>
-        {loading ? <LinearProgress className={TW_TOP_LEFT} /> : null}
-        <iframe
-          {...other}
-          className={clsx(SELF_CENTER, className)}
-          title={title}
-          src={src}
-          frameBorder='0'
-          onLoad={() => setLoading(false)}
-        />
-      </>
-    );
-  };
+  return (
+    <>
+      {loading ? <LinearProgress className={TW_TOP_LEFT} /> : null}
+      <iframe
+        {...other}
+        className={clsx(SELF_CENTER, className)}
+        title={title}
+        src={src}
+        frameBorder='0'
+        onLoad={() => setLoading(false)}
+      />
+    </>
+  );
+};
 
 export interface FilePreviewProps {
   open: boolean;
