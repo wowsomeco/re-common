@@ -22,6 +22,7 @@ export type SubmitOptions = {
   body?: any | null;
   /** additional query that gets concatenated with the provided endpoint in [[useStatelessFetch]] on submit */
   query?: string | undefined;
+  headers?: Record<string, string>;
 };
 
 export type SubmitCallback<T> = (opts?: SubmitOptions) => Promise<Resp<T>>;
@@ -120,13 +121,17 @@ export const useStatelessFetch = <T>(
     async (opts: SubmitOptions = {}): Promise<Resp<T>> => {
       abortController.current = new AbortController();
 
-      const headers: HeadersInit = {};
+      let headers: HeadersInit = {};
       if (contentType) headers['Content-Type'] = contentType;
       // check first if token is provided
       const token = checkToken();
       if (token) headers['Authorization'] = token;
       // check first whether tenantKey is defined
       if (tenantKey) headers[tenantKey] = subDomain();
+
+      if (opts.headers) {
+        headers = { ...headers, ...opts.headers };
+      }
 
       const { body, query } = opts;
       let theBody = body;
