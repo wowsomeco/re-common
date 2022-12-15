@@ -48,7 +48,7 @@ const MaskedInput: React.FC<MaskedInputProps> = ({
   onLoad,
   ...other
 }) => {
-  const { errors, control, register } = useFormContext();
+  const { errors, control } = useFormContext();
   const value: string | number | undefined = useWatch({
     control,
     name: name
@@ -65,7 +65,7 @@ const MaskedInput: React.FC<MaskedInputProps> = ({
 
           // @ts-ignore
           onLoad?.({ target: ref });
-          ref && ref.focus()
+          ref && ref.focus();
         }}
       />
     );
