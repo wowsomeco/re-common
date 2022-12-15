@@ -1,4 +1,4 @@
-import TextField from '@material-ui/core/TextField';
+import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import NumberFormat, {
@@ -14,10 +14,19 @@ export interface MaskedInputProps
   extends Omit<FormInputProps, 'defaultValue' | 'onChange'>,
     Omit<
       NumberFormatProps,
-      'name' | 'prefix' | 'suffix' | 'min' | 'max' | 'step'
+      | 'name'
+      | 'prefix'
+      | 'suffix'
+      | 'min'
+      | 'max'
+      | 'step'
+      | 'onChange'
+      | 'size'
+      | 'color'
     > {
   type?: 'text' | 'tel' | 'password';
   onChange?: (values: NumberFormatValues) => void;
+  onLoad?: TextFieldProps['onLoad'];
 }
 
 const MaskedInput: React.FC<MaskedInputProps> = ({
@@ -36,13 +45,31 @@ const MaskedInput: React.FC<MaskedInputProps> = ({
   inputMode = 'none',
   readOnly = false,
   onChange,
+  onLoad,
   ...other
 }) => {
-  const { errors, control } = useFormContext();
+  const { errors, control, register } = useFormContext();
   const value: string | number | undefined = useWatch({
     control,
     name: name
   });
+
+  // Mode Text Field Custom
+  const TextFieldCustom = (props: TextFieldProps) => {
+    return (
+      <TextField
+        {...props}
+        inputRef={(ref) => {
+          // @ts-ignore
+          props?.ref?.current = ref;
+
+          // @ts-ignore
+          onLoad?.({ target: ref });
+          ref && ref.focus()
+        }}
+      />
+    );
+  };
 
   return (
     <Controller
@@ -76,7 +103,7 @@ const MaskedInput: React.FC<MaskedInputProps> = ({
             decimalSeparator={decimalSeparator}
             thousandSeparator={thousandSeparator}
             allowNegative={false}
-            customInput={TextField}
+            customInput={TextFieldCustom}
             {...withError(name, errors)}
           />
         );
