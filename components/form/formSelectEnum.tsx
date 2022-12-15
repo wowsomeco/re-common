@@ -1,10 +1,16 @@
-import { Autocomplete, CircularProgress, TextField } from '@material-ui/core';
+import {
+  Autocomplete,
+  AutocompleteProps,
+  CircularProgress,
+  TextField,
+  TextFieldProps
+} from '@material-ui/core';
 import get from 'lodash.get';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { useMountedState } from 'react-use';
 
 import { useStatelessFetchJson } from '~w-common/hooks';
+import { useSafeState } from '~w-common/hooks/useSafeState';
 
 import { FormFieldProps } from './common';
 import { withError } from './utils';
@@ -40,12 +46,13 @@ export interface EnumWithCount {
   count: number;
 }
 
-export const FormSelectEnumLocal: React.FC<
-  SelectEnumPropsBase & {
-    options?: EnumModel[];
-    loading?: boolean;
-  }
-> = ({
+export interface FormSelectEnumLocalProps extends SelectEnumPropsBase {
+  options?: EnumModel[];
+  loading?: boolean;
+  onLoad?: AutocompleteProps<string, false, false, false>['onLoad'];
+}
+
+export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
   name,
   rules,
   label,
@@ -56,7 +63,8 @@ export const FormSelectEnumLocal: React.FC<
   optionName = 'name',
   defaultValue = null,
   getOptionLabel,
-  onChange
+  onChange,
+  onLoad
 }) => {
   const findNameById = (id: string) => {
     const findIndex = options?.findIndex((x) => get(x, optionId) === id);
@@ -108,6 +116,11 @@ export const FormSelectEnumLocal: React.FC<
             />
           )}
           {...props}
+          ref={(r) => {
+            props.ref.current = r;
+            // @ts-ignore
+            onLoad?.({ target: r, value: props.value });
+          }}
           onChange={(_, data) => {
             props.onChange(data);
             onChange?.(data);
@@ -129,11 +142,9 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
     endpoint: endpoint || ''
   });
 
-  const [result, setResult] = React.useState<EnumModel[]>();
-  const [fetching, setFetching] = React.useState(true);
+  const [result, setResult] = useSafeState<EnumModel[]>([]);
+  const [fetching, setFetching] = useSafeState(true);
   const loading = fetching;
-
-  const isMounted = useMountedState();
 
   React.useEffect(() => {
     (async () => {
@@ -143,10 +154,8 @@ export const FormSelectEnum: React.FC<SelectEnumProps> = ({
         setFetching(true);
         const { data } = await submit();
 
-        if (isMounted()) {
-          setResult((data as EnumWithCount)?.data || data || []);
-          setFetching(false);
-        }
+        setResult((data as EnumWithCount)?.data || data || []);
+        setFetching(false);
       } else {
         setResult([]);
       }
