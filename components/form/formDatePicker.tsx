@@ -1,5 +1,9 @@
-import { TextField } from '@material-ui/core';
-import { DatePicker, DatePickerProps } from '@material-ui/lab';
+import { TextField, TextFieldProps } from '@material-ui/core';
+import {
+  DatePicker,
+  DatePickerProps,
+  DateTimePickerProps
+} from '@material-ui/lab';
 import dayjs, { Dayjs } from 'dayjs';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
@@ -12,6 +16,7 @@ export interface FormDatePickerProps
     Omit<DatePickerProps, 'value' | 'onChange' | 'renderInput'> {
   required?: boolean;
   onChange?: (v: Dayjs | undefined) => void;
+  onLoad?: TextFieldProps['onLoad'];
 }
 
 const FormDatePicker: React.FC<FormDatePickerProps> = ({
@@ -22,6 +27,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
   inputFormat = 'YYYY-MM-DD',
   disableFuture = false,
   onChange,
+  onLoad,
   ...other
 }) => {
   const { errors, control } = useFormContext();
@@ -55,6 +61,13 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
               {...withError(name, errors)}
               fullWidth
               InputLabelProps={{ required }}
+              inputRef={(ref) => {
+                // @ts-ignore
+                props?.ref?.current = ref;
+                
+                // @ts-ignore
+                onLoad?.({ target: ref });
+              }}
               InputProps={{
                 ...props.InputProps,
                 readOnly: true

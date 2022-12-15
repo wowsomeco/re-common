@@ -1,4 +1,4 @@
-import TextField from '@material-ui/core/TextField';
+import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import * as React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
 
@@ -20,6 +20,7 @@ export interface FormInputProps extends FormFieldProps {
   suffix?: React.ReactNode;
   readOnly?: boolean;
   autoComplete?: React.InputHTMLAttributes<unknown>['autoComplete'];
+  onLoad?: TextFieldProps['onLoad'];
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -41,15 +42,23 @@ const FormInput: React.FC<FormInputProps> = ({
   readOnly = false,
   rules,
   disabled,
-  onChange
+  onChange,
+  onLoad
 }) => {
   const { register, errors } = useFormContext();
+  const inputRef = React.useMemo(() => {
+    return register({ ...rules });
+  }, []);
 
   return (
     <TextField
       defaultValue={defaultValue}
       name={name}
-      inputRef={register(rules)}
+      inputRef={(ref) => {
+        inputRef(ref);
+        // @ts-ignore
+        onLoad?.({ target: ref });
+      }}
       type={type}
       label={label}
       disabled={disabled}
@@ -82,12 +91,14 @@ export interface FormInputNumericProps
 
 export const FormInputNumber: React.FC<FormInputNumericProps> = ({
   rules,
+  onLoad,
   ...other
 }) => {
   return (
     <FormInput
       type='number'
       inputMode='numeric'
+      onLoad={onLoad}
       rules={{
         valueAsNumber: true,
         ...rules
