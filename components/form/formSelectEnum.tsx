@@ -1,4 +1,10 @@
-import { Autocomplete, CircularProgress, TextField } from '@material-ui/core';
+import {
+  Autocomplete,
+  AutocompleteProps,
+  CircularProgress,
+  TextField,
+  TextFieldProps
+} from '@material-ui/core';
 import get from 'lodash.get';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
@@ -43,6 +49,7 @@ export interface EnumWithCount {
 export interface FormSelectEnumLocalProps extends SelectEnumPropsBase {
   options?: EnumModel[];
   loading?: boolean;
+  onLoad?: AutocompleteProps<string, false, false, false>['onLoad'];
 }
 
 export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
@@ -56,7 +63,8 @@ export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
   optionName = 'name',
   defaultValue = null,
   getOptionLabel,
-  onChange
+  onChange,
+  onLoad
 }) => {
   const findNameById = (id: string) => {
     const findIndex = options?.findIndex((x) => get(x, optionId) === id);
@@ -108,6 +116,11 @@ export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
             />
           )}
           {...props}
+          ref={(r) => {
+            props.ref.current = r;
+            // @ts-ignore
+            onLoad?.({ target: r, value: props.value });
+          }}
           onChange={(_, data) => {
             props.onChange(data);
             onChange?.(data);
