@@ -14,7 +14,7 @@ export interface ScrollDialogProps
     onOpen: (scrollType: DialogProps['scroll']) => void
   ) => React.ReactNode;
   title?: string;
-  content: ((onClose: () => void) => React.ReactNode) | React.ReactNode;
+  content: React.ReactNode | ((onClose: () => void) => React.ReactNode);
   renderActions?: (onClose: () => void) => React.ReactNode;
 }
 
