@@ -117,7 +117,15 @@ export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
           )}
           {...props}
           ref={(r) => {
-            props.ref.current = r;
+            if (
+              props?.ref &&
+              typeof props?.ref === 'object' &&
+              !Array.isArray(props?.ref) &&
+              props?.ref !== null
+            ) {
+              props.ref.current = r;
+            }
+            
             // @ts-ignore
             onLoad?.({ target: r, value: props.value });
           }}

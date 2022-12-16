@@ -62,9 +62,16 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
               fullWidth
               InputLabelProps={{ required }}
               inputRef={(ref) => {
-                // @ts-ignore
-                props?.ref?.current = ref;
-                
+                if (
+                  props?.ref &&
+                  typeof props?.ref === 'object' &&
+                  !Array.isArray(props?.ref) &&
+                  props?.ref !== null
+                ) {
+                  // @ts-ignore
+                  props.ref.current = ref;
+                }
+
                 // @ts-ignore
                 onLoad?.({ target: ref });
               }}
