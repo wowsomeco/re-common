@@ -60,6 +60,13 @@ const MaskedInput: React.FC<MaskedInputProps> = ({
       <TextField
         {...props}
         inputRef={(ref) => {
+          if (typeof props.inputRef == 'function') {
+            props.inputRef(ref);
+          } else {
+            //@ts-ignore
+            if (props.inputRef) props.inputRef.current = ref;
+          }
+
           if (
             props?.ref &&
             typeof props?.ref === 'object' &&

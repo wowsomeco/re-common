@@ -1,9 +1,5 @@
 import { TextField, TextFieldProps } from '@material-ui/core';
-import {
-  DatePicker,
-  DatePickerProps,
-  DateTimePickerProps
-} from '@material-ui/lab';
+import { DatePicker, DatePickerProps } from '@material-ui/lab';
 import dayjs, { Dayjs } from 'dayjs';
 import * as React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
@@ -55,26 +51,30 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
 
             onChange && onChange(v);
           }}
+          inputRef={(ref) => {
+            // @ts-ignore
+            onLoad?.({ target: ref });
+          }}
           renderInput={(props) => (
             <TextField
               {...props}
               {...withError(name, errors)}
               fullWidth
               InputLabelProps={{ required }}
-              inputRef={(ref) => {
-                if (
-                  props?.ref &&
-                  typeof props?.ref === 'object' &&
-                  !Array.isArray(props?.ref) &&
-                  props?.ref !== null
-                ) {
-                  // @ts-ignore
-                  props.ref.current = ref;
-                }
+              // inputRef={(ref) => {
+              //   if (
+              //     props?.ref &&
+              //     typeof props?.ref === 'object' &&
+              //     !Array.isArray(props?.ref) &&
+              //     props?.ref !== null
+              //   ) {
+              //     // @ts-ignore
+              //     props.ref.current = ref;
+              //   }
 
-                // @ts-ignore
-                onLoad?.({ target: ref });
-              }}
+              //   // @ts-ignore
+              //   onLoad?.({ target: ref });
+              // }}
               InputProps={{
                 ...props.InputProps,
                 readOnly: true
