@@ -13,7 +13,7 @@ export interface TableProps<T> extends CommonProps {
 /**
  * WIP
  */
-export const Table = <T extends any>(props: TableProps<T>) => {
+export const Table = <T,>(props: TableProps<T>) => {
   const {
     data = [],
     header,

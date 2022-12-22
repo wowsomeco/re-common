@@ -4,7 +4,7 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import { Theme, useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
-import { CSSProperties, createStyles, makeStyles } from '@mui/styles';
+import { createStyles, CSSProperties, makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight, FiMenu } from 'react-icons/fi';
