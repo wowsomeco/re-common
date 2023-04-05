@@ -67,7 +67,10 @@ export const FormSelectEnumLocal: React.FC<FormSelectEnumLocalProps> = ({
   onLoad
 }) => {
   const findNameById = (id: string) => {
-    const findIndex = options?.findIndex((x) => get(x, optionId) === id);
+    const findIndex = options?.findIndex((x) => {
+      const findOptionId = get(x, optionId);
+      return findOptionId == id;
+    });
     const find =
       findIndex != null && findIndex >= 0 ? options?.[findIndex] : undefined;
 
