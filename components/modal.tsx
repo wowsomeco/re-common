@@ -1,7 +1,6 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import UseKey from 'react-use/lib/component/UseKey';
-import { KeyFilter } from 'react-use/lib/useKey';
+import useKey, { KeyFilter } from 'react-use/lib/useKey';
 
 import { ZINDEX_MODAL } from '~w-common/scripts/constants';
 
@@ -28,6 +27,7 @@ export const Modal: React.FC<ModalProps> = ({
   appendOnBody = false,
   children
 }) => {
+  keyTriggers.forEach((k) => useKey(k[0], k[1]));
   const rgba = toRgba(color, opacity);
 
   const component: React.ReactElement = (
@@ -39,20 +39,13 @@ export const Modal: React.FC<ModalProps> = ({
     </div>
   );
 
-  return (
-    <>
-      {keyTriggers.map((k) => (
-        <UseKey key={k[0]} filter={k[0]} fn={k[1]} />
-      ))}
-      {open ? (
-        appendOnBody ? (
-          ReactDOM.createPortal(component, document.body)
-        ) : (
-          component
-        )
-      ) : (
-        <></>
-      )}
-    </>
+  return open ? (
+    appendOnBody ? (
+      ReactDOM.createPortal(component, document.body)
+    ) : (
+      component
+    )
+  ) : (
+    <></>
   );
 };
