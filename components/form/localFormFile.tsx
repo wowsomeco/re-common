@@ -52,6 +52,10 @@ export interface LocalFormFileProps extends Omit<ViewFormFileProps, 'file'> {
   onUpload?: (f: File) => Promise<void>;
   onChange?: (f: File) => void;
   renderLoader?: () => React.ReactNode;
+  noteMsg?: string;
+  acceptMsg?: string;
+  acceptReplaceAll?: string;
+  maxFileReplaceAll?: string;
 }
 
 export interface RenderDownloaderOpts {
@@ -179,7 +183,11 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
   renderDownloader,
   renderPreviewer,
   renderDelete,
-  header
+  header,
+  noteMsg,
+  acceptMsg,
+  acceptReplaceAll = '$accept',
+  maxFileReplaceAll = '$maxFile'
 }) => {
   const {
     acceptedFiles,
@@ -193,7 +201,7 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
     accept,
     maxFiles,
     disabled: uploading || disabled,
-    maxSize
+    maxSize: maxSize
   });
 
   const acceptedFileItems = acceptedFiles.map((file: FileWithPath) => (
@@ -216,6 +224,17 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
     if (onUpload) await onUpload(acceptedFiles[0]);
   };
 
+  // Add note and replace "accept" and "maxFile" into max file upload
+  const convertBytes = formatBytes(maxSize);
+  noteMsg = accept
+    ? noteMsg?.replaceAll(
+        acceptReplaceAll,
+        acceptMsg || `${accept}`.replaceAll(',', '/ ')
+      )
+    : noteMsg;
+  noteMsg = noteMsg?.replaceAll(maxFileReplaceAll, convertBytes);
+
+  // On Mount
   React.useEffect(() => {
     if (onChange && acceptedFiles[0]) onChange(acceptedFiles[0]);
   }, [acceptedFiles]);
@@ -257,6 +276,9 @@ const LocalFormFile: React.FC<LocalFormFileProps> = ({
             ) : (
               <>
                 <input {...getInputProps()} />
+                <div className='text-yellow-500 text-center text-sm'>
+                  {noteMsg}
+                </div>
                 <p className='cursor-pointer hover:text-blue-500'>{dropText}</p>
               </>
             )}
