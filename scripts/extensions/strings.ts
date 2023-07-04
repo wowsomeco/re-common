@@ -49,7 +49,7 @@ export function capitalize(
 ): string {
   let capitalized: string = '';
 
-  const splits: string[] = str.split(separator);
+  const splits: string[] = `${str}`.split(separator);
 
   for (let i = 0; i < splits.length; i++) {
     const s = splits[i];
