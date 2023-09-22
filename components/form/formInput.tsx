@@ -33,7 +33,7 @@ const FormInput: React.FC<FormInputProps> = ({
   step,
   autoComplete = 'on',
   type = 'text',
-  inputMode = 'none',
+  inputMode = 'text',
   required = false,
   fullWidth = true,
   multiline = false,
