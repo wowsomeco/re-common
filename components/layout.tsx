@@ -2,9 +2,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import { Theme, useTheme } from '@material-ui/core/styles';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme
+} from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
-import { createStyles, CSSProperties, makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight, FiMenu } from 'react-icons/fi';
@@ -46,7 +50,7 @@ const useStyles = (drawerWidth: number = 240, isMenuBar: boolean = false) =>
         ...theme.mixins.toolbar,
         display: 'flex',
         alignItems: 'center'
-      } as CSSProperties,
+      },
       drawerPaper: {
         width: drawerWidth,
         overflowX: 'hidden'
@@ -62,7 +66,9 @@ export interface LayoutProps {
   menuBar?: React.ReactNode;
   sideBar: React.ReactNode;
   sideBarWidth?: number;
+  backgroundColor?: string;
   headerSlot?: React.ReactNode;
+  customLogoSrc?: string;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -70,7 +76,9 @@ export const Layout: React.FC<LayoutProps> = ({
   sideBar,
   sideBarWidth = 240,
   headerSlot,
-  children
+  backgroundColor,
+  children,
+  customLogoSrc
 }) => {
   const { appName } = useAppProvider();
 
@@ -110,7 +118,12 @@ export const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div className={classes.root}>
-      <AppBar position='fixed' className={clsx(classes.appBar)} color='inherit'>
+      <AppBar
+        position='fixed'
+        className={clsx(classes.appBar)}
+        color='inherit'
+        style={{ backgroundColor: backgroundColor }}
+      >
         <Toolbar className='flex items-center justify-between'>
           <IconButton
             color='inherit'
@@ -122,7 +135,17 @@ export const Layout: React.FC<LayoutProps> = ({
             <FiMenu />
           </IconButton>
           <div className='flex justify-between items-center'>
-            <p className='text-blue-400 font-bold sm:mr-3'>{appName}</p>
+            {!customLogoSrc && (
+              <p className='text-blue-400 font-bold sm:mr-3'>{appName}</p>
+            )}
+            {customLogoSrc && (
+              <img
+                alt='logo katapeta'
+                src={customLogoSrc}
+                className='w-20 md:w-40 pr-2'
+              />
+            )}
+
             {menuBar && (
               <Hidden smDown={!menuBar} mdDown={!!menuBar} implementation='css'>
                 {menuBar}
