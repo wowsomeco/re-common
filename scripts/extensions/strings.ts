@@ -90,13 +90,28 @@ export function isEmptyStr(s: string): boolean {
 export function isEmail(email: string, nullable: boolean = false): boolean {
   if (nullable && !email) return true;
 
-  const re =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
 
+// export function fmtDate(date: string, fmt: string = 'DD-MM-YY'): string {
+//   return dayjs(date).format(fmt);
+// }
+
 export function fmtDate(date: string, fmt: string = 'DD-MM-YY'): string {
-  return dayjs(date).format(fmt);
+  // Define the input format based on the provided date string
+  const inputFormat = 'M/D/YYYY h:mm:ssA Z'; // Adjust according to your date string format
+
+  // Parse the date with the input format
+  const parsedDate = dayjs(date, inputFormat);
+
+  // Check if the date is valid
+  if (!parsedDate.isValid()) {
+    throw new Error('Invalid Date');
+  }
+
+  // Format the date with the provided format
+  return parsedDate.format(fmt);
 }
 
 export function lastSplit(str: string, separator: string): string | undefined {
