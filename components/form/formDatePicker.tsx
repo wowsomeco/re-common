@@ -51,6 +51,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
 
             onChange && onChange(v);
           }}
+          //@ts-ignore
           inputRef={(ref) => {
             // @ts-ignore
             onLoad?.({ target: ref });

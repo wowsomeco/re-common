@@ -76,6 +76,7 @@ const FormTimePicker: React.FC<FormTimePickerProps> = ({
             p.onChange(val);
             onChange?.(val);
           }}
+          // @ts-ignore
           inputRef={(ref) => {
             // @ts-ignore
             onLoad?.({ target: ref });
