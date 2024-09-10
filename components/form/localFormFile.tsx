@@ -144,6 +144,8 @@ export const ViewFormFile: React.FC<ViewFormFileProps> = ({
   /** TODO: give default value to renderDelete */
   renderDelete = () => null
 }) => {
+  const ext = file?.url.split('.')?.[4]?.toLowerCase() ?? 'file';
+
   return (
     <div
       style={{ minHeight: '50px' }}
@@ -151,7 +153,8 @@ export const ViewFormFile: React.FC<ViewFormFileProps> = ({
     >
       <p className='text-gray-500'>{label}</p>
       {file ? (
-        <div className='flex space-x-3'>
+        <div className='flex space-x-3 items-center'>
+          <p>{`File: "${file.name}.${ext}"`}</p>
           <Downloader file={file} renderDownloader={renderDownloader} />
           <Previewer file={file} renderPreviewer={renderPreviewer} />
           {renderDelete()}
